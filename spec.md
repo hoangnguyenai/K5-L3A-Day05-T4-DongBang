@@ -7,6 +7,7 @@
 |---|---|---|
 | Nguyễn Lâm Hoàng | 2A202603448 | §1: lát cắt và phạm vi; §2: dữ liệu giả, kịch bản rủi ro và lựa chọn hai ca đắt nhất; §6: tiêu chí và phương pháp đánh giá Pass/Fail |
 | Lê Hoàng Quân | 2A202603369 | §4: mức tự chủ của từng tool và thử trên ba kịch bản |
+| Kiều Đình Văn | 2A202603376 | §3: khi AI sai — thiết kế lời đáp, giao diện, bước xử lý và thông báo cho hai kịch bản đắt nhất; phân loại lỗi và áp dụng nguyên tắc HAX/PAIR |
 
 ## §1. Lát cắt & phạm vi — R1
 
@@ -94,6 +95,219 @@ S01 và S02 là hai kịch bản được chọn phân tích sâu, đánh dấu 
 
 ## §3. Khi AI sai — R3
 
+### 3.0. Đầu vào và quy ước dùng chung cho §3
+
+- **Hai ca:** S01/F01 (từ chối sai, người mua chịu) và S02/F02 (hoàn sai, người bán chịu), giữ nguyên như §2. Thời điểm đánh giá: 12/11/2026, 14:00.
+- **Giả định của §3 về F01:** fixture không ghi người mua đã gửi yêu cầu trả hàng chính thức hay chưa. §3 giả định **chưa gửi**, vì đây là đường nguy hiểm hơn (còn 25 giờ). Nếu đã gửi thì bỏ bước “gửi yêu cầu”, các phần khác giữ nguyên.
+- **Đề xuất bổ sung F01 (cần Hoàng xác nhận):** §2 yêu cầu snapshot ghi rõ thời điểm, nhưng F01 chưa có giờ. §3 dùng giờ dựng sau: đặt hàng lúc 01/11 09:15, shop sửa mô tả lúc 04/11 20:40.
+- **Hai loại hạn luôn hiện riêng** (theo §2.1): *hạn gửi yêu cầu* của người mua và *hạn bổ sung/phản hồi 24 giờ* của bên nhận thông báo.
+- **Thang trạng thái dùng chung cho câu chữ và màn hình.** Phần này trả lời điểm “đã chuyển / đang chờ duyệt / đã thực hiện” mà §2.5 ghi cần chốt:
+
+| # | Trạng thái hiển thị | AI được nói | AI không được nói |
+|---|---|---|---|
+| 1 | Đang trao đổi với trợ lý AI | những gì AI thấy trong hồ sơ | bất kỳ kết luận nào về tiền |
+| 2 | Đã gửi yêu cầu, ghi nhận lúc … | “yêu cầu của bạn đã được ghi nhận lúc …” | “đã được gia hạn”, “chắc chắn được hoàn” |
+| 3 | Đang chờ [bên] phản hồi, hạn … | tên bên đang được chờ và hạn | “bên kia im lặng thì bạn thắng” |
+| 4 | Đã chuyển nhân viên, **chưa có quyết định** | “đã chuyển”, bên tiếp nhận là ai | thời điểm có quyết định, thời điểm tiền về |
+| 5 | Đã có quyết định: [hoàn / không hoàn], đã thực hiện lúc … | kết quả và thời điểm thực hiện | |
+
+**Luật câu chữ:** AI chỉ được dùng các từ “đã hoàn”, “đã đóng”, “đã từ chối” khi hồ sơ ở trạng thái 5. Ở mọi trạng thái khác, AI dùng từ đúng với trạng thái đó.
+
+---
+
+### 3.1. S01 — Mô tả bị sửa sau khi bán (F01)
+
+**Tin người mua:** “Lúc mua máy xay ghi 1,5 lít, nhận chỉ 1 lít. Giờ shop sửa trang rồi bảo tôi đọc nhầm.”
+
+**Đường trải nghiệm:** *failure / sai nguồn*. Lỗi đắt nhất là AI đối chiếu với trang hiện tại, thấy “1,0 L khớp 1,0 lít”, rồi gọi `tu_choi_khieu_nai`.
+
+#### AI nói (nguyên văn, gửi người mua)
+
+> Mình là **trợ lý AI** của Shopee, không phải nhân viên xử lý khiếu nại.
+>
+> Với đơn DB-101 (máy xay), mình thấy:
+> • Mô tả lúc bạn đặt (01/11 09:15): “Cối chính 1,5 lít”
+> • Mô tả hiện tại của shop: “Cối chính 1,0 lít”, được sửa lúc 04/11 20:40, **sau khi bạn đặt**
+> • Tem trên hàng bạn nhận: “1,0 L”
+>
+> Hồ sơ được đối chiếu với **mô tả lúc bạn đặt**, không theo trang hiện tại. Mình thấy con số trên tem khác con số trong mô tả lúc đặt. Lý do có chênh lệch này thì mình không xác định được.
+>
+> Shop đã phản hồi rằng hàng khớp trang hiện tại, tức là hai bên chưa thống nhất. Mình **không tự quyết hoàn tiền hay từ chối**. Mình đã chuyển hồ sơ cho trưởng nhóm xử lý khiếu nại, kèm cả hai phiên bản mô tả và phản hồi của shop. Hiện **chưa có quyết định**.
+>
+> Việc bạn cần làm: **gửi yêu cầu trả hàng trước 15:00 ngày 13/11 (còn 25 giờ)**. Mình đã điền sẵn đơn, lý do và ảnh tem; bạn chỉ cần kiểm tra rồi bấm gửi. Việc chuyển cho nhân viên không thay cho bước này và không kéo dài hạn.
+
+*Tự kiểm câu chữ:* không hứa hoàn tiền, không hứa thời điểm có quyết định, không nói shop gian lận, không nói người mua đọc nhầm. Câu cuối chặn đúng lỗi “chuyển người rồi bỏ mặc khách” mà §2.4 (S08) cảnh báo.
+
+#### Người mua thấy gì (ngoài câu chữ)
+
+```
+[Trợ lý AI · không phải nhân viên]
+Đơn DB-101 · Máy xay · 890.000đ                 [Không phải đơn này]
+┌ Đối chiếu mô tả ──────────────────────────────────────────────┐
+│ Lúc đặt · 01/11 09:15   ✔ Căn cứ xét │ Cối chính 1,5 lít       │
+│ Hiện tại · sửa 04/11 20:40 (sau đặt) │ Cối chính 1,0 lít       │
+│ Tem hàng nhận (ảnh của bạn)          │ 1,0 L                   │
+│ Phản hồi của shop                    │ “Trang hiện tại ghi 1    │
+│                                      │  lít, tôi giao đúng”     │
+│ AI không xác định được: lý do mô tả bị sửa                     │
+└────────────────────────────────────────────────────────────────┘
+Trạng thái: ④ Đã chuyển trưởng nhóm · CHƯA có quyết định
+⏱ Hạn gửi yêu cầu (của bạn): 15:00 13/11 · còn 25 giờ
+⏱ Hạn bổ sung giải thích (của shop): 14:02 13/11
+[Kiểm tra & gửi yêu cầu trả hàng (đã điền sẵn)]  [Bổ sung bằng chứng]
+```
+
+- Dòng “Hiện tại” bị gạch mờ và có nhãn “sau đặt”. Dòng “Lúc đặt” có nhãn **Căn cứ xét**. Người mua thấy AI dựa vào câu nào.
+- **Không có** nút “Hoàn tiền”, “Đóng khiếu nại” hay “Phạt shop” trong khung chat.
+
+#### Bước tiếp theo, và nếu không ai làm gì
+
+| Người mua làm | Kết quả |
+|---|---|
+| Bấm **Kiểm tra & gửi yêu cầu** | Màn hình xác nhận hiện đơn, lý do và ảnh. Người mua bấm gửi, trạng thái chuyển sang ② “Đã gửi yêu cầu, ghi nhận lúc …”. AI không tự gửi thay. |
+| Bấm **Không phải đơn này** | Quay lại chọn đơn. Bằng chứng của DB-101 không bị gắn sang đơn mới (S10). |
+| Bấm **Bổ sung bằng chứng** | Ảnh mới được thêm vào hồ sơ đã chuyển, không tạo hồ sơ mới. |
+| Không làm gì | AI không đóng hồ sơ. Hệ thống nhắc một lần lúc 12:00 13/11 (còn 3 giờ). Quá 15:00 13/11 mà chưa gửi yêu cầu thì quyền gửi hết theo chính sách dựng. Điều này đã hiện từ đầu, không phải bất ngờ. |
+
+#### Ai được báo, sau bao lâu
+
+| Ai | Khi nào | Thấy gì | Không thấy gì |
+|---|---|---|---|
+| Trưởng nhóm (`chuyen_truong_nhom`) | Ngay lúc 14:02 12/11 | Bảng đối chiếu ba nguồn có thời điểm, phản hồi của shop, tin người mua, cờ **“Mô tả sửa sau đặt hàng”** và **“Hai bên chưa thống nhất”**, hai loại hạn. AI **không** kèm đề xuất hoàn hay không hoàn. | — |
+| Shop | Ngay lúc 14:02 12/11 | “Hồ sơ DB-101 đã chuyển nhân viên Shopee vì hai bên chưa thống nhất. Căn cứ xét là mô tả lúc người mua đặt (01/11 09:15): ‘Cối chính 1,5 lít’. Mô tả đã sửa lúc 04/11 20:40 không dùng làm căn cứ cho đơn này. Bạn có thể bổ sung giải thích hoặc chứng cứ đến 14:02 13/11. Chưa có quyết định.” | Số điện thoại, địa chỉ người mua |
+| Người mua | Mỗi khi trạng thái đổi | Trạng thái mới và hạn tiếp theo | Số điện thoại, địa chỉ shop |
+
+*Vì sao shop được báo lại dù đã phản hồi:* shop phản hồi dựa trên **trang hiện tại**, tức là chưa được nghe trên đúng căn cứ. Báo lại với snapshot là cho shop cơ hội giải thích trên căn cứ đúng (ví dụ: sản phẩm có hai biến thể dung tích, hoặc snapshot gắn sai phiên bản).
+
+#### Quyết định: **dừng quyết định tiền và chuyển người, kèm giải thích giới hạn**
+
+| Phương án | Kết luận | Vì sao |
+|---|---|---|
+| Hỏi lại | Loại | Đã có đủ đơn, chỗ sai, snapshot, tem và phản hồi của shop. Hỏi thêm là vòng lặp “xin lại thứ đã có” (S08, và lời người mua trong track). Thay câu hỏi bằng thẻ đơn có nút **Không phải đơn này**. |
+| Chỉ trả lời kèm giới hạn, không chuyển | Loại | Hai bên đã có ý kiến trái nhau. Theo “Sản phẩm thật hôm nay”, sàn xem xét khi hai bên không thống nhất. Chỉ giải thích mà không chuyển thì người mua chờ trong khi không ai có quyền quyết, và hạn vẫn chạy. |
+| **Dừng quyết định tiền, chuyển trưởng nhóm, nói rõ AI thấy gì và không thấy gì** | **Chọn** | Việc AI làm tốt là đặt đúng phiên bản cạnh nhau. Việc AI không làm được là xác định *lý do* chênh lệch. `chuyen_truong_nhom` đảo lại được, còn hai tool chuyển tiền thì không. |
+| AI tự hoàn vì bằng chứng nghiêng về người mua | Loại | `soan_hoan_tien` khó đảo. Chênh lệch có thể có lý do AI không kiểm được (biến thể, snapshot gắn nhầm). Shop chưa được nghe trên căn cứ đúng (rubric track ý 3). |
+| AI gửi kèm “đề xuất: hoàn tiền” cho trưởng nhóm | Loại | Đề xuất của AI dễ thành điểm neo, khiến người duyệt bấm theo mà không xem hồ sơ. AI chỉ đưa bảng đối chiếu và cờ, người duyệt tự kết luận. |
+
+#### Loại lỗi, và cách nói, cách sửa theo loại
+
+- **Lỗi hệ thống (sai nguồn).** Đây là lỗi đắt của S01: hệ thống đọc trang hiện tại thay vì snapshot. Lỗi thuộc về hệ thống nên hệ thống **nhận lỗi**, không đẩy cho người dùng. Nếu AI đã lỡ trả lời sai mà chưa gọi tool nào, câu đính chính là:
+  > Câu trả lời trước của mình đã đối chiếu với **mô tả hiện tại** thay vì mô tả lúc bạn đặt. Đó là lỗi của hệ thống, không phải của bạn. Mình đã đối chiếu lại: …
+- **Biến thể F04 (không tải được snapshot), cũng là lỗi hệ thống.** Đây là đường *graceful failure*: AI dừng, không thay bằng trang hiện tại.
+  > Mình chưa mở được mô tả lúc bạn đặt nên chưa đối chiếu được. Mình sẽ không dùng trang hiện tại thay thế vì shop có thể đã sửa. Mình đã chuyển hồ sơ cho trưởng nhóm để xác minh; hiện chưa có quyết định. Bạn vẫn cần gửi yêu cầu trước 15:00 ngày 13/11.
+- **Nếu `tu_choi_khieu_nai` đã chạy:** không câu chữ nào sửa được. Xem 3.4.
+
+---
+
+### 3.2. S02 — Người bán đúng, người mua doạ bóc phốt (F02)
+
+**Tin người mua:** “Nồi ghi 6 lít mà đo chỉ 5 lít. Hoàn ngay, không tôi bóc phốt sàn.”
+
+**Đường trải nghiệm:** *low-confidence*. Bằng chứng trông như sai mô tả (6 khác 5) nhưng thật ra hai con số là hai loại dung tích. Lỗi đắt là AI gọi `soan_hoan_tien` để dập lời doạ. Lỗi đắt ngược lại là AI gọi `tu_choi_khieu_nai` vì “tem khớp” (§2.4).
+
+#### AI nói (nguyên văn, gửi người mua)
+
+> Mình là **trợ lý AI** của Shopee, không phải nhân viên xử lý khiếu nại.
+>
+> Với đơn DB-102 (nồi chiên), mô tả lúc bạn đặt ghi: **“Dung tích danh định 6 L; dung tích sử dụng 5 L”**. Tem trên nồi bạn nhận ghi đúng hai con số này.
+> • 6 L là **dung tích danh định**
+> • 5 L là **dung tích sử dụng**, khớp với số bạn đo được
+>
+> Với bằng chứng hiện có của bạn và của shop, mình **chưa thấy đủ căn cứ** để xác định nồi sai mô tả, nên mình không đề xuất hoàn tiền. Mình cũng **không đóng khiếu nại** của bạn.
+>
+> Nếu nồi khác mô tả ở điểm nào khác ngoài dung tích, bạn chụp chỗ đó gửi thêm. Nếu bạn vẫn không đồng ý, bạn có thể gửi yêu cầu để nhân viên Shopee xem cả bằng chứng của bạn và của shop. Hạn gửi yêu cầu: **15:00 ngày 13/11 (còn 25 giờ)**.
+>
+> Bạn có quyền đánh giá công khai. Điều đó không thay đổi cách hồ sơ này được xét.
+
+*Kiểm tra trung lập (khớp §6.2 bước 2):* bỏ vế “không tôi bóc phốt sàn” khỏi tin rồi chạy lại thì câu trả lời, nút và trạng thái **giữ nguyên**, chỉ mất câu cuối. Lời doạ không làm đổi đường đi.
+
+#### Người mua thấy gì
+
+```
+[Trợ lý AI · không phải nhân viên]
+Đơn DB-102 · Nồi chiên · 1.290.000đ             [Không phải đơn này]
+┌ Trích mô tả lúc đặt  ✔ Căn cứ xét ────────────────────────────┐
+│ “Dung tích danh định [6 L]; dung tích sử dụng [5 L]”           │
+│ Số bạn đo: 5 L  →  khớp “dung tích sử dụng”   (màu xám)        │
+│ Tem hàng nhận: ghi cùng hai con số trên                        │
+│ Bằng chứng của shop: ảnh tem (đã nhận, không cần gửi lại)      │
+└────────────────────────────────────────────────────────────────┘
+Trạng thái: ① Chưa đủ căn cứ · CHƯA có quyết định
+⏱ Hạn gửi yêu cầu (của bạn): 15:00 13/11 · còn 25 giờ
+[Gửi thêm bằng chứng]  [Vẫn gửi yêu cầu để nhân viên xét]  [Đã hiểu, không gửi yêu cầu]
+```
+
+- Ô “khớp” dùng **màu xám**, không dùng xanh hay đỏ, để không đọc thành “shop thắng”.
+- Trạng thái ghi “Chưa đủ căn cứ”, **không** ghi “Bị từ chối”.
+- Không có nút hoàn hay đóng. Nút **Đã hiểu, không gửi yêu cầu** chỉ kết thúc hội thoại: chưa có yêu cầu nào được gửi nên không có tiền nào chuyển, và AI không gọi `tu_choi_khieu_nai`.
+
+#### Bước tiếp theo, và nếu không ai làm gì
+
+| Người mua làm | Kết quả |
+|---|---|
+| **Gửi thêm bằng chứng** | Ảnh thêm vào hồ sơ. Nếu ảnh có thông tin liên hệ thì được che trước khi shop thấy (S07). Shop có 24 giờ để phản hồi bằng chứng mới. |
+| **Vẫn gửi yêu cầu để nhân viên xét** | Màn hình xác nhận yêu cầu, người mua tự bấm gửi (②). Vì hai bên chưa thống nhất nên hồ sơ chuyển trưởng nhóm (④). |
+| **Đã hiểu, không gửi yêu cầu** | Hội thoại kết thúc. Người mua vẫn có thể mở lại và gửi yêu cầu đến 15:00 13/11; dòng này hiện ngay dưới nút. |
+| Không làm gì | AI không đóng, không hoàn. Nhắc một lần lúc 12:00 13/11. |
+
+#### Ai được báo, sau bao lâu
+
+| Ai | Khi nào | Thấy gì | Không thấy gì |
+|---|---|---|---|
+| Trưởng nhóm | Chỉ khi người mua chọn **Vẫn gửi yêu cầu** (chuyển ngay sau khi gửi) | Trích snapshot, tem, số đo, ảnh tem của shop, cờ **“Có lời doạ, không phải căn cứ”**, hạn | — |
+| Shop | Khi có yêu cầu hoặc bằng chứng mới | Nội dung yêu cầu hoặc bằng chứng mới, hạn 24 giờ, kèm dòng **“Không cần gửi lại ảnh tem đã gửi”** | Lời doạ, số điện thoại, địa chỉ người mua |
+| Người mua | Mỗi khi trạng thái đổi | Trạng thái và hạn | Số điện thoại, địa chỉ shop |
+
+- *Vì sao không chuyển trưởng nhóm ngay khi bị doạ:* nếu cứ doạ là được lên nhân viên nhanh hơn thì thiết kế đang **thưởng cho lời doạ**.
+- *Vì sao shop không thấy lời doạ:* lời doạ không phải căn cứ, shop không cần nó để phản hồi, và cho shop thấy chỉ làm xung đột leo thang. Trưởng nhóm thì cần thấy cờ để biết AI đã bỏ qua lời doạ một cách có chủ ý.
+
+#### Quyết định: **trả lời kèm giới hạn**
+
+| Phương án | Kết luận | Vì sao |
+|---|---|---|
+| Hỏi lại | Loại | Đã đủ đơn, chỗ sai (dung tích), số đo, snapshot và ảnh tem của shop. Câu hỏi có ích duy nhất (“còn sai chỗ nào khác?”) đã nằm sẵn trong câu trả lời, không bắt thêm một lượt. |
+| **Trả lời kèm giới hạn** | **Chọn** | AI giải thích được phần nó chắc (hai loại dung tích cùng một nguồn) và nói rõ phần nó không kết luận (“chưa đủ căn cứ”, không phải “bạn sai”). Người mua vẫn giữ mọi đường: bổ sung, gửi để nhân viên xét, hoặc dừng. |
+| Dừng và chuyển người ngay | Loại | Thưởng cho lời doạ, tốn thời gian nhân viên cho ca có lời giải thích rõ, và người mua phải chờ mới hiểu điều có thể giải thích ngay. |
+| Hoàn để xoa dịu (`soan_hoan_tien`) | Loại | Shop mất 1.290.000đ và hàng, khó đảo lại. Lời doạ nhắm vào **sàn**, nên nếu hoàn thì sàn đang bảo vệ uy tín của mình bằng tiền của shop. |
+| Đóng vì tem khớp (`tu_choi_khieu_nai`) | Loại | Người mua có thể còn bằng chứng mới (§2.4). Đóng hồ sơ chuyển tiền về shop và khó đảo. Tem khớp chỉ là “chưa đủ căn cứ”, không phải “đã xét xong”. |
+
+#### Loại lỗi, và cách nói, cách sửa theo loại
+
+- **Lỗi ngữ cảnh** là lỗi đắt của S02. Có hai dạng:
+  - Một trợ lý so số đơn giản (“6 ≠ 5”) chạy đúng thiết kế nhưng sai với mô tả có hai loại dung tích.
+  - Một trợ lý được thiết kế để “xoa dịu khách đang giận” cũng chạy đúng thiết kế, nhưng trong tranh chấp hai bên thì xoa dịu một bên là xử thua bên kia.
+
+  Cả hai dạng phải **sửa thiết kế** (đối chiếu theo tên trường trong snapshot, luật “lời doạ không phải căn cứ”, bỏ hành động tiền khỏi khung chat). Sửa câu xin lỗi không giải quyết được.
+- **Hiểu nhầm phía người dùng:** người mua hiểu “6 lít” là dung tích dùng được. AI **không xin lỗi** vì hệ thống không sai, và **không nói “bạn đọc nhầm”** (đúng câu shop đã nói và làm người mua bức xúc ở S01). AI chỉ trích đúng dòng snapshot để người mua tự kiểm.
+
+---
+
+### 3.3. Nguyên tắc HAX/PAIR, mỗi cái trỏ vào một chỗ cụ thể
+
+| Nguyên tắc | Chỗ cụ thể trong câu chữ hoặc màn hình |
+|---|---|
+| **G11 · Giải thích vì sao** (cùng PAIR *Explainability + Trust*) | S01: thẻ **“Đối chiếu mô tả”** đặt ba nguồn cạnh nhau, có thời điểm và nhãn **Căn cứ xét**, dòng hiện tại có nhãn “sau đặt”. S02: thẻ **“Trích mô tả lúc đặt”** đóng khung hai con số “[6 L]” và “[5 L]” kèm dòng “Số bạn đo: 5 L → khớp dung tích sử dụng”. Người dùng tự kiểm được căn cứ, không phải tin AI. |
+| **G2 · Làm rõ AI làm tốt đến đâu** | Nhãn **“Trợ lý AI · không phải nhân viên”** và câu mở đầu “Mình là trợ lý AI…” (cũng đáp ứng Điều 11 khoản 1 Luật AI 134/2025/QH15). Dòng **“AI không xác định được: lý do mô tả bị sửa”** (S01). Câu “Mình không tự quyết hoàn tiền hay từ chối”. |
+| **G10 · Thu hẹp phạm vi khi nghi ngờ** | S02: trạng thái **“Chưa đủ căn cứ · CHƯA có quyết định”** thay vì phán ai đúng; câu “mình không đề xuất hoàn tiền… cũng không đóng khiếu nại”. S01/F04: không có snapshot thì **không đối chiếu**, chuyển người thay vì dùng trang hiện tại. |
+
+### 3.4. Lỗi mà sửa câu chữ không cứu được, và thiết kế cứu nó thế nào
+
+| Lỗi | Vì sao câu chữ không cứu được | Thiết kế cứu |
+|---|---|---|
+| **S01: AI đối chiếu trang hiện tại rồi gọi `tu_choi_khieu_nai`** | Tiền đã về shop. Câu xin lỗi sau đó không mở lại hồ sơ. Câu trả lời sai lại **trông đúng** (tem khớp trang hiện tại) nên không ai phát hiện kịp. | ① Mỗi đơn lưu **snapshot mô tả có phiên bản và thời điểm**. ② Luật: AI chỉ đối chiếu với snapshot; không có snapshot (F04) thì dừng và chuyển người. ③ `tu_choi_khieu_nai` **không có trong khung chat** và không nằm trong việc AI tự làm; mức cụ thể do §4 chốt. ④ Màn hình hiện hai phiên bản cho **cả hai bên**, nên shop cũng thấy căn cứ đúng. |
+| **S02: lời doạ “ăn” sau vài lượt** | Nếu khung chat còn nút hoàn tiền, hoặc AI có quyền tự gọi `soan_hoan_tien`, thì câu chữ trung lập tới đâu, người mua cũng chỉ cần doạ thêm vài lượt. | Bỏ mọi hành động tiền khỏi khung chat. Quyết định tiền chỉ ở màn hình người duyệt, sau khi hai bên đã có căn cứ. Cờ “lời doạ, không phải căn cứ” chỉ hiện cho người duyệt. |
+| **Cả hai ca: “đã chuyển nhân viên” nhưng hạn gửi yêu cầu vẫn chạy** | Câu “đừng lo, nhân viên đang xem” không dừng được đồng hồ, và §2.1 không có cơ chế gia hạn. | Nút **gửi yêu cầu đã điền sẵn** (một lần bấm), **hai loại hạn hiện riêng**, nhắc khi còn 3 giờ, và luật câu chữ cấm nói “đã gia hạn”. |
+
+### 3.5. Bàn giao cho §4–§6
+
+| Cho | Điểm §3 đã giả định, cần phần sau chốt |
+|---|---|
+| §4 | S01 giả định `chuyen_truong_nhom` là **tự làm**, vì đảo lại được và chờ duyệt thì tốn hạn của người mua. `soan_hoan_tien` và `tu_choi_khieu_nai` **không có trong khung chat**. `yeu_cau_bang_chung` **không xin lại** bằng chứng đã có (ảnh tem shop ở S02). `phat_shop` không xuất hiện ở cả hai ca. Người duyệt **không nhận đề xuất kết quả** từ AI. |
+| §4 (đề xuất luật, chưa có trong chính sách dựng) | “Yêu cầu được ghi nhận trước hạn gửi thì được xét tới khi có quyết định, kể cả khi bổ sung hay phản hồi diễn ra sau hạn gửi.” Đây không phải gia hạn, mà là giữ quyền cho yêu cầu đã nộp. Khi §4 chưa chốt luật này, AI chỉ nói “đã ghi nhận lúc …”. |
+| §5 | Prototype cần có: thẻ đối chiếu ba nguồn (S01), thẻ trích hai loại dung tích (S02), thang trạng thái ①–⑤, hai đồng hồ hạn riêng, nút **Không phải đơn này**, nút gửi yêu cầu đã điền sẵn, và **không có** nút hoàn, đóng hay phạt. Ba ô ở 3.3 là ba số để đánh trên ảnh. |
+| §6 | E01: thẻ đối chiếu (S01) và thẻ trích dung tích (S02). E02: không có nút tiền trong chat, kèm luật câu chữ ở 3.0. E03: hai đồng hồ hạn, nút gửi điền sẵn, nhắc khi còn 3 giờ. Giờ đặt và giờ sửa của F01 là đề xuất ở 3.0, cần xác nhận khi chấm. |
+
+
 ## §4. Mức tự chủ — R4
 AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo các điều kiện dưới đây. Người có thẩm quyền xử lý khiếu nại của sàn quyết định hoàn tiền hoặc đóng khiếu nại. Bộ phận chuyên trách xử lý việc phạt shop.
 
@@ -126,7 +340,7 @@ AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo c
 
 | Kịch bản §2 | AI làm gì, người dùng thấy gì? | Cái sai có bị chặn? | Khi nào cần hỏi? Có phải chờ vô ích? |
 |---|---|---|---|
-| **S01/F01 · bản mô tả lúc đặt có sẵn và ghi 1,5 L** | AI đối chiếu bản mô tả lúc đặt của đúng đơn. Nếu thiếu bản đó và chưa thể bổ sung, AI hiển thị “Chưa có bản mô tả lúc đặt để đối chiếu” và chuyển hồ sơ kèm lý do. | **Có.** Trang hiện tại không đủ căn cứ để hoàn tiền hoặc đóng khiếu nại. Hai thao tác đều cần người duyệt. | Nếu chưa rõ đơn hoặc chi tiết bị sai, AI hỏi một câu trước. Khi đơn đã rõ và thiếu căn cứ quyết định, AI tự chuyển hồ sơ để người có thẩm quyền xem xét. |
+| **S01/F01 · Shop sửa mô tả sau khi bán** | AI hiển thị bản mô tả lúc đặt ghi **1,5 L**, còn trang hiện tại và tem hàng ghi **1,0 L**. AI chỉ rõ chênh lệch và chuyển hồ sơ kèm bằng chứng nếu hai bên vẫn tranh chấp. | **Có.** AI dùng bản lúc đặt để đối chiếu. Hoàn tiền hoặc đóng khiếu nại đều cần người có thẩm quyền duyệt. | Đơn và điểm khác biệt đã rõ nên AI không hỏi lại. Nếu cần thêm phản hồi, AI chỉ yêu cầu đúng bên bổ sung phần còn thiếu. |
 | **S02/F02 · Tem khớp mô tả, người mua dọa bóc phốt** | AI hiển thị nội dung đã đối chiếu và mục bằng chứng còn thiếu. Shop thấy nội dung khiếu nại liên quan và hạn phản hồi. Nếu hai bên vẫn tranh chấp, AI chuyển hồ sơ. | **Có.** Lời đe dọa không kích hoạt hoàn tiền. Tem khớp cũng chưa đủ để AI tự đóng hồ sơ khi còn bằng chứng cần xem. | AI chỉ yêu cầu đúng bên bổ sung đúng mục còn thiếu. Thời gian chờ dành cho phản hồi của hai bên và quyết định của người có thẩm quyền. |
 | **F03 · Giao sai size, shop đã xác nhận** | Khi đã xác định đúng đơn, AI dùng xác nhận có sẵn trong hồ sơ, hướng dẫn người mua gửi yêu cầu ngay và chuẩn bị đề xuất hoàn. | **Có.** Hồ sơ có thể được soạn ngay. Tiền chỉ được chuyển sau khi người có thẩm quyền duyệt. | Người mua không phải nộp lại xác nhận của shop hoặc chờ mới được hướng dẫn. Khâu chờ duyệt bắt đầu ở quyết định chuyển tiền. |
 
