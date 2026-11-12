@@ -7,7 +7,7 @@
 |---|---|---|
 | Nguyễn Lâm Hoàng | 2A202603448 | §1: lát cắt và phạm vi; §2: dữ liệu giả, kịch bản rủi ro và lựa chọn hai ca đắt nhất; §6: tiêu chí Pass/Fail, tổng hợp kết quả kiểm thử khi có thiết kế; ghép bài |
 | Chờ bổ sung thành viên 2 | Chờ bổ sung | §3: UX khi AI sai, câu chữ, nguyên tắc HAX/PAIR |
-| Lê Hoàng Quân | Chờ bổ sung | §4: mức tự chủ của từng tool và thử trên ba kịch bản |
+| Lê Hoàng Quân | 2A202603369 | §4: mức tự chủ của từng tool và thử trên ba kịch bản |
 | Chờ bổ sung thành viên 4 | Chờ bổ sung | §5: prototype, lập luận giao diện, ảnh đánh số |
 
 > Trạng thái: bản bàn giao phần §1, §2, §6 của Nguyễn Lâm Hoàng; chưa phải bài nộp hoàn chỉnh. Tên nhóm DongBang lấy theo tên thư mục, cần nhóm xác nhận. LAB ghi nhóm đúng 3 người; nhóm cần xác nhận với TA việc ghi nhận 4 thành viên. Không đưa dữ liệu người thật vào các tình huống bên dưới.
