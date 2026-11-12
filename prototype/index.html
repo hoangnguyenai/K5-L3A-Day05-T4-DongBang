@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hỗ trợ đơn hàng · Đông Bằng</title>
+<style>
+:root{--ink:#182e28;--muted:#506860;--line:#dce7df;--green:#175b45;--soft:#e9f5ee;--warm:#fff2d8;--amber:#755016}
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5ef;color:var(--ink);font:15px/1.5 "Inter","Segoe UI",sans-serif}
+button,select,textarea{font:inherit;color:inherit}
+button,select,summary{cursor:pointer}
+:focus-visible{outline:3px solid #b57520;outline-offset:3px}
+[hidden]{display:none!important}
+h1,h2,h3,p{margin:0}
+header{background:#153830;color:#fff}
+.bar,main{max-width:1192px;margin:auto;padding:16px 28px}
+.bar,.toolbar,.title,.section-head,.actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bar,.title,.section-head{justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:750}
+.mark{display:grid;place-items:center;width:32px;height:32px;background:#bee8cf;color:#153830;border-radius:9px;font-size:21px}
+.demo{color:#c8e6d8;font-size:13px}
+main{padding-top:24px;padding-bottom:32px}
+.toolbar{margin-bottom:23px}
+.toolbar label{font-weight:650;margin-right:4px}
+.toolbar button{margin-left:auto}
+select,textarea{background:#fff;border:1px solid #adbfba;border-radius:8px;padding:8px 10px}
+select{max-width:100%}
+h1{font-size:clamp(30px,4vw,46px);line-height:1.12;letter-spacing:-.05em;margin:4px 0 7px}
+h2{font-size:22px;letter-spacing:-.025em}
+h3{font-size:15px}
+.eyebrow{font-size:12px;letter-spacing:.1em;font-weight:750;text-transform:uppercase;color:var(--green)}
+.muted,small{color:var(--muted)}
+.deadline{padding:10px 16px;border-radius:11px;background:var(--warm);color:var(--amber)}
+.deadline strong{display:block;font-size:21px}
+.steps{display:flex;flex-wrap:wrap;gap:24px;margin:19px 0 15px;padding:10px 0;border-block:1px solid var(--line);color:var(--muted);font-size:14px}
+.steps [aria-current=step]{color:var(--green);font-weight:750}
+.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}
+.panel > * + *{margin-top:12px}
+.num{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#214f42;color:#fff;font-size:12px;vertical-align:middle;margin-right:5px}
+.bubble{padding:11px 13px;background:#f3f6f2;border-radius:10px;overflow-wrap:anywhere}
+.bubble.ai{background:var(--soft);border-left:3px solid #59a985}
+.bubble p{margin-top:4px}
+.evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.card{border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0}
+.card:first-child{background:#f1f9f3;border-color:#a9cdb8}
+.card strong{display:block;font-size:17px;line-height:1.25;margin:6px 0;overflow-wrap:anywhere}
+.card small{display:block}
+.shop{padding:9px 11px;border-left:3px solid #b1c4b8;background:#f6f8f4;border-radius:5px;font-size:14px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:99px;background:var(--soft);color:var(--green)}
+.chip.wait{background:var(--warm);color:var(--amber)}
+.action-block{border-top:1px solid var(--line);padding-top:12px}
+.action-block p{margin:6px 0 10px}
+button{border:1px solid #adbfba;background:#fff;padding:8px 12px;border-radius:8px;font-weight:650}
+button:hover{background:#edf5ef}
+button.primary{background:var(--green);border-color:var(--green);color:white}
+button.primary:hover{background:#114836}
+summary{font-weight:650;color:var(--green)}
+details > div{margin-top:9px}
+.sim{margin-top:15px;color:var(--muted);font-size:13px}
+.sim label{display:inline-flex;align-items:center;gap:5px}
+.sim input{accent-color:var(--green)}
+textarea{width:100%;resize:vertical;margin:7px 0}
+.result,.notice{padding:10px 12px;border-radius:9px;overflow-wrap:anywhere}
+.result{background:var(--soft)}
+.notice{background:var(--warm);color:var(--amber);font-size:14px}
+#feedback:not(:empty){margin-top:12px}
+.packet{margin:8px 0 0;padding-left:20px;overflow-wrap:anywhere}
+.packet li+li{margin-top:5px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.title{align-items:flex-start}}
+@media(max-width:480px){main,.bar{padding-left:13px;padding-right:13px}.panel{padding:13px}.evidence{grid-template-columns:1fr}.toolbar button{margin-left:0}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <div class="brand"><span class="mark" aria-hidden="true">↔</span> Hỗ trợ đơn hàng</div>
+  <span class="demo">Đông Bằng · Lab 5 · Dữ liệu giả lập</span>
+</div></header>
+<main>
+  <div class="toolbar">
+    <label for="case">Kịch bản demo</label>
+    <select id="case">
+      <option value="S01">S01 · Shop sửa mô tả sau khi bán</option>
+      <option value="S02">S02 · Tem khớp mô tả lúc đặt</option>
+    </select>
+    <button id="reset" type="button">Bắt đầu lại</button>
+  </div>
+  <div class="title">
+    <div><p class="eyebrow" id="order"></p><h1>Hàng không đúng mô tả</h1><p class="muted" id="product"></p></div>
+    <div class="deadline"><strong id="remaining"></strong><span>Hạn gửi yêu cầu · 15:00, 13/11/2026</span></div>
+  </div>
+  <nav class="steps" aria-label="Tiến trình hồ sơ">
+    <span id="step-check" aria-current="step">Đối chiếu thông tin</span>
+    <span id="step-review">Nhân viên xem xét</span>
+  </nav>
+  <div class="grid">
+    <section class="panel" aria-labelledby="evidence-title">
+      <div class="section-head"><h2 id="evidence-title"><span class="num">1</span> Căn cứ đối chiếu</h2><span id="signal" class="chip wait"></span></div>
+      <div class="evidence">
+        <div class="card"><h3>Mô tả lúc đặt</h3><strong id="snapshot"></strong><small id="snapshot-meta"></small></div>
+        <div class="card"><h3 id="listing-title"></h3><strong id="listing"></strong><small id="listing-meta"></small></div>
+        <div class="card"><h3>Ảnh tem hàng nhận</h3><strong id="label"></strong><small id="label-meta"></small></div>
+      </div>
+      <p class="shop"><strong>Shop phản hồi</strong> <span id="seller"></span></p>
+      <div class="bubble"><h3>Người mua</h3><p id="buyer"></p></div>
+      <div class="bubble ai"><h3>Trợ lý AI</h3><p id="assistant"></p></div>
+      <form id="correction" hidden>
+        <label for="correction-text"><strong>Sửa hoặc bổ sung thông tin</strong></label>
+        <textarea id="correction-text" rows="3" maxlength="500" placeholder="Ví dụ: ảnh tem và thông số in trên hộp có nội dung khác nhau."></textarea>
+        <div class="actions"><button class="primary" type="submit">Lưu thông tin</button><button id="cancel" type="button">Huỷ</button></div>
+      </form>
+      <p id="saved" class="result" hidden></p>
+    </section>
+    <section class="panel" id="check" aria-labelledby="check-title">
+      <h2 id="check-title"><span class="num">2</span> Bước tiếp theo</h2>
+      <div class="action-block">
+        <span class="chip">AI tự làm</span>
+        <p id="next"></p>
+        <div class="actions">
+          <button id="send" class="primary" type="button">Chuyển nhân viên xem xét</button>
+          <button type="button" data-edit>Sửa hoặc bổ sung</button>
+        </div>
+      </div>
+      <div class="action-block">
+        <span class="chip wait">Cần người duyệt</span>
+        <p>Nhân viên có thẩm quyền quyết định hoàn tiền hoặc đóng khiếu nại sau khi xem căn cứ của hai bên.</p>
+      </div>
+    </section>
+    <section class="panel" id="review" aria-labelledby="review-title" hidden>
+      <h2 id="review-title" tabindex="-1"><span class="num">3</span> Theo dõi hồ sơ</h2>
+      <div class="actions"><span class="chip">Đã chuyển trưởng nhóm</span><span class="chip wait">Chờ nhân viên xem xét</span></div>
+      <p id="handoff" class="result"></p>
+      <p class="notice" id="review-deadline"></p>
+      <div class="action-block">
+        <span class="chip wait">Cần người duyệt</span>
+        <p>Hồ sơ đang mở. Hoàn tiền hoặc đóng khiếu nại cần quyết định của nhân viên có thẩm quyền.</p>
+        <details>
+          <summary>Hồ sơ người duyệt nhận</summary>
+          <ul class="packet" id="packet"></ul>
+        </details>
+      </div>
+      <button type="button" data-edit>Sửa hoặc bổ sung</button>
+    </section>
+  </div>
+  <details class="sim">
+    <summary>Thử tình huống biên</summary>
+    <div class="actions">
+      <label><input id="missing" type="checkbox"> Lỗi tải bản lúc đặt</label>
+      <label><input id="urgent" type="checkbox"> Còn 10 phút gửi yêu cầu</label>
+      <label id="pressure-control" hidden><input id="pressure" type="checkbox" checked> Người mua dọa bóc phốt</label>
+    </div>
+    <div class="actions">
+      <button type="button" data-request="refund">Thử “Hoàn ngay”</button>
+      <button type="button" data-request="close">Thử “Đóng ngay”</button>
+      <button type="button" data-request="penalty">Thử “Phạt shop”</button>
+    </div>
+  </details>
+  <p id="feedback" role="status"></p>
+</main>
+<script>
+const cases = {
+  S01: {
+    order: 'DB-101', product: 'Máy xay', price: '890.000 đ',
+    snapshot: 'Cối chính 1,5 L', snapshotMeta: 'Bản lưu khi đặt · phiên bản v1',
+    listingTitle: 'Mô tả hiện tại', listing: 'Cối chính 1,0 L', listingMeta: 'Phiên bản v2 · cập nhật sau khi đặt',
+    label: '1,0 L', labelMeta: 'Đọc từ tem hàng người mua nhận',
+    seller: '“Trang hiện tại ghi 1 lít, tôi giao đúng.”',
+    buyer: 'Lúc mua máy xay ghi 1,5 lít, nhận chỉ 1 lít. Giờ shop sửa trang rồi bảo tôi đọc nhầm.',
+    signal: 'Có chênh lệch',
+    response: 'Bản lúc bạn đặt ghi cối chính 1,5 L. Trang hiện tại và tem hàng nhận đều ghi 1,0 L. Shop đang dựa vào bản cập nhật sau khi bạn đặt. Mình đã thấy chênh lệch và có thể chuyển cả hai bản cùng ảnh tem để nhân viên xem xét.',
+    next: 'AI tập hợp bản lúc đặt, trang hiện tại, ảnh tem và phản hồi của shop để chuyển trưởng nhóm.',
+    reason: 'Cần xem xét chênh lệch giữa bản lúc đặt và tem hàng nhận.'
+  },
+  S02: {
+    order: 'DB-102', product: 'Nồi chiên', price: '1.290.000 đ',
+    snapshot: 'Danh định 6 L · sử dụng 5 L', snapshotMeta: 'Bản lưu khi đặt',
+    listingTitle: 'Số đo người mua', listing: '5 L', listingMeta: 'Người mua báo dung tích đo được',
+    label: 'Danh định 6 L · sử dụng 5 L', labelMeta: 'Đọc từ ảnh tem do shop gửi',
+    seller: 'Shop đã gửi ảnh tem và đề nghị đối chiếu hai loại dung tích.',
+    buyer: 'Nồi ghi 6 lít mà đo chỉ 5 lít. Hoàn ngay',
+    signal: 'Chưa đủ căn cứ',
+    response: 'Bản lúc đặt và ảnh tem đều ghi dung tích danh định 6 L, dung tích sử dụng 5 L. Số đo 5 L khớp dung tích sử dụng. Với thông tin hiện có, mình chưa xác định được hàng giao sai mô tả. Bạn có thể bổ sung điểm khác biệt hoặc chuyển nhân viên nếu vẫn còn tranh chấp.',
+    next: 'Nếu vẫn còn tranh chấp, AI có thể chuyển hồ sơ kèm phản hồi đã có của shop và thông tin bạn bổ sung.',
+    reason: 'Người mua yêu cầu xem xét thêm sau khi đối chiếu hai loại dung tích.'
+  }
+};
+
+const byId = id => document.getElementById(id);
+const write = (id, value) => { byId(id).textContent = value; };
+let submitted = false;
+let correction = '';
+let editButton;
+
+function render() {
+  const caseId = byId('case').value;
+  const data = cases[caseId];
+  const missing = byId('missing').checked;
+  const urgent = byId('urgent').checked;
+  const buyer = caseId === 'S02'
+    ? data.buyer + (byId('pressure').checked ? ', không tôi bóc phốt sàn.' : '.')
+    : data.buyer;
+  const reason = missing ? 'Chưa có bản mô tả lúc đặt để đối chiếu.' : data.reason;
+  const remaining = urgent ? 'Còn 10 phút' : 'Còn 25 giờ';
+
+  write('order', 'Đơn ' + data.order);
+  write('product', data.product + ' · ' + data.price + ' · Nhận hàng 15:00, 06/11/2026');
+  write('remaining', remaining);
+  write('signal', missing ? 'Thiếu bản lúc đặt' : data.signal);
+  write('snapshot', missing ? 'Chưa truy cập được' : data.snapshot);
+  write('snapshot-meta', missing ? 'Cần xác minh bản lưu' : data.snapshotMeta);
+  write('listing-title', data.listingTitle);
+  write('listing', data.listing);
+  write('listing-meta', data.listingMeta);
+  write('label', data.label);
+  write('label-meta', data.labelMeta);
+  write('seller', data.seller);
+  write('buyer', '“' + buyer + '”');
+  write('assistant', missing
+    ? reason + ' Mình chưa thể xác định mô tả khi bạn mua. Mình có thể chuyển hồ sơ để xác minh bản lưu.'
+    : data.response);
+  write('next', (missing ? 'AI chuyển hồ sơ kèm lý do thiếu bản lúc đặt.' : data.next)
+    + (urgent ? ' Hạn gửi yêu cầu còn 10 phút. Việc chuyển hồ sơ giữ nguyên hạn này.' : ''));
+
+  byId('check').hidden = submitted;
+  byId('review').hidden = !submitted;
+  byId('pressure-control').hidden = caseId !== 'S02';
+  byId(submitted ? 'step-check' : 'step-review').removeAttribute('aria-current');
+  byId(submitted ? 'step-review' : 'step-check').setAttribute('aria-current', 'step');
+  write('handoff', reason + ' Trưởng nhóm tiếp nhận để điều phối nhân viên có thẩm quyền.');
+  write('review-deadline', remaining + ' để gửi yêu cầu. Hạn này giữ nguyên khi chuyển nhân viên. Nếu bạn chưa gửi yêu cầu trả hàng/hoàn tiền, hãy gửi trong chi tiết đơn trước hạn.');
+
+  const entries = [
+    'Đơn ' + data.order + ' · Giá trị đơn ' + data.price + '.',
+    'Mô tả lúc đặt · ' + (missing ? 'chưa truy cập được' : data.snapshot + ' · ' + data.snapshotMeta),
+    data.listingTitle + ' · ' + data.listing + ' · ' + data.listingMeta,
+    'Ảnh tem · ' + data.label + ' · ' + data.labelMeta,
+    'Người mua · ' + buyer,
+    'Shop · ' + data.seller,
+    'Lý do chuyển · ' + reason + (urgent ? ' Còn 10 phút đến hạn gửi yêu cầu.' : '')
+  ];
+  if (correction) entries.push('Bổ sung của người mua · ' + correction);
+  byId('packet').replaceChildren(...entries.map(entry => {
+    const item = document.createElement('li');
+    item.textContent = entry;
+    return item;
+  }));
+  byId('saved').hidden = !correction;
+  write('saved', (submitted ? 'Đã cập nhật hồ sơ đang chờ xem xét · ' : 'Thông tin bổ sung · ') + correction);
+}
+
+function announce(message) {
+  byId('feedback').className = message ? 'notice' : '';
+  write('feedback', message);
+}
+
+function resetCase() {
+  submitted = false;
+  correction = '';
+  byId('missing').checked = false;
+  byId('urgent').checked = false;
+  byId('pressure').checked = true;
+  byId('correction').hidden = true;
+  byId('review').querySelector('details').open = false;
+  announce('');
+  render();
+}
+
+byId('case').addEventListener('change', resetCase);
+byId('reset').addEventListener('click', resetCase);
+for (const id of ['missing', 'urgent', 'pressure']) {
+  byId(id).addEventListener('change', () => {
+    announce('');
+    render();
+  });
+}
+
+byId('send').addEventListener('click', () => {
+  submitted = true;
+  byId('correction').hidden = true;
+  announce('');
+  render();
+  byId('review-title').focus();
+});
+
+document.querySelectorAll('[data-edit]').forEach(button => {
+  button.addEventListener('click', () => {
+    editButton = button;
+    byId('correction').hidden = false;
+    byId('correction-text').value = correction;
+    byId('correction-text').focus();
+  });
+});
+
+byId('cancel').addEventListener('click', () => {
+  byId('correction').hidden = true;
+  editButton.focus();
+});
+
+byId('correction').addEventListener('submit', event => {
+  event.preventDefault();
+  correction = byId('correction-text').value.trim();
+  byId('correction').hidden = true;
+  render();
+  announce(correction ? 'Đã lưu thông tin bổ sung.' : 'Đã xoá nội dung bổ sung.');
+  editButton.focus();
+});
+
+const blockedRequests = {
+  refund: 'Yêu cầu hoàn tiền cần được nhân viên có thẩm quyền xem xét cùng bằng chứng của hai bên.',
+  close: 'Hồ sơ vẫn mở. Chỉ nhân viên có thẩm quyền mới có thể quyết định đóng khiếu nại.',
+  penalty: 'Xử phạt thuộc bộ phận chuyên trách. Bạn có thể chuyển hồ sơ để trưởng nhóm điều phối.'
+};
+document.querySelectorAll('[data-request]').forEach(button => {
+  button.addEventListener('click', () => announce(blockedRequests[button.dataset.request]));
+});
+resetCase();
+</script>
+</body>
+</html>

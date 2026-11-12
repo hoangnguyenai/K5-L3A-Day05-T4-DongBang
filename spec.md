@@ -147,6 +147,27 @@ Trạng thái **Đã hoàn tiền** chỉ xuất hiện sau khi hệ thống xá
 
 ## §5. Prototype — R5
 
+### §5.1. Cách chạy
+
+Mở [prototype/index.html](prototype/index.html) bằng trình duyệt. Prototype dùng HTML, CSS và JavaScript trong một tệp. Dữ liệu F01/F02, nội dung đọc từ ảnh tem, phản hồi AI và thao tác chuyển hồ sơ đều được mô phỏng. Luồng chạy đến khi hồ sơ chờ nhân viên xem xét.
+
+- **S01 là ca demo chính.** Đối chiếu bản lúc đặt 1,5 L với trang hiện tại và tem 1,0 L. Bấm **Chuyển nhân viên xem xét**, sau đó mở **Hồ sơ người duyệt nhận**.
+- **S02 là ca kiểm thử thứ hai.** Đối chiếu dung tích danh định 6 L và dung tích sử dụng 5 L. Trong **Thử tình huống biên**, tắt lời dọa để kiểm tra phản hồi AI giữ nguyên căn cứ.
+- Dùng **Sửa hoặc bổ sung** để nhập thông tin trước hoặc sau khi chuyển. Mục tình huống biên cho phép thử lỗi tải nguồn, thời hạn còn 10 phút và yêu cầu hoàn tiền, đóng hoặc phạt ngay.
+
+### §5.2. Ảnh và đối chiếu thiết kế
+
+| Ảnh | Vị trí | Thiết kế và mức tự chủ |
+|---|---|---|
+| [Ảnh 01 — Đối chiếu](prototype/01-doi-chieu.png) | **1** · Căn cứ đối chiếu | HAX G11 — Hiện bản lúc đặt, trang hiện tại, tem và phản hồi shop để giải thích vì sao AI phát hiện chênh lệch. AI tự đối chiếu. |
+| Ảnh 01 | **2** · Bước tiếp theo | HAX G9 — Người mua có thể sửa hoặc bổ sung. AI tự tập hợp và chuyển hồ sơ khi người mua yêu cầu, với quyết định hoàn tiền hoặc đóng hồ sơ dành cho nhân viên có thẩm quyền. |
+| [Ảnh 02 — Chờ xem xét](prototype/02-cho-xem-xet.png) | **3** · Theo dõi hồ sơ | HAX G11 — Hiện lý do chuyển, bên tiếp nhận, thời hạn và hồ sơ người duyệt nhận. Quyết định hoàn tiền hoặc đóng khiếu nại cần người duyệt. |
+
+Dùng nguồn và phiên bản đặt cạnh nhau để người mua kiểm tra được nhận định, vì điểm quyết định của S01 là thời điểm của nguồn và điểm quyết định của S02 là cách hiểu loại dung tích. Một điểm tin cậy dạng phần trăm sẽ không cho biết nguồn nào đang thiếu hoặc vì sao AI dừng. Hai mức tự chủ xuất hiện cạnh hành động liên quan để người mua biết ai xử lý và hồ sơ đang ở bước nào.
+
+Lời thoại AI là bản tạm cho §3. Nút chuyển hồ sơ, trạng thái chờ và thông báo thời hạn trong prototype là hành vi mô phỏng cần nhóm xác nhận trước khi chốt demo.
+
+
 ## §6. Tốt là gì — R6
 
 ### 6.1. Ba tiêu chí Pass/Fail
