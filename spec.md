@@ -365,7 +365,7 @@ Với S01 và S02, khi chuyển hồ sơ, giao diện hiển thị **Đã chuy�
 
 ### §5.1. Cách chạy
 
-Mở [prototype/index.html](prototype/index.html) bằng trình duyệt. Hai màn hình là hồ sơ và hộp xác nhận yêu cầu. Prototype dùng HTML, CSS và JavaScript trong một tệp, với dữ liệu, thời gian và thông báo mô phỏng.
+Mở [prototype/index.html](prototype/index.html) bằng trình duyệt để chạy mô phỏng. Để dùng AI thật, cấu hình OpenRouter và chạy backend Python/FastAPI bằng `.\.venv\Scripts\python.exe -m prototype.server` theo [README](README.md), rồi mở `http://127.0.0.1:3000`. Hai màn hình chính là hồ sơ và hộp xác nhận yêu cầu. Dữ liệu, thời gian và hành động xử lý hồ sơ vẫn là mô phỏng; bước đối chiếu có thể gọi model thật qua máy chủ local.
 
 - **S01:** AI tự chuyển trưởng nhóm khi hai bên chưa thống nhất. Bấm **Kiểm tra & gửi yêu cầu trả hàng (đã điền sẵn)**, xem đơn, lý do và tem minh hoạ, rồi bấm **Gửi yêu cầu** để hiện giờ ghi nhận. Hạn gửi của người mua và hạn phản hồi của shop hiển thị riêng.
 - **S02:** Đối chiếu dung tích danh định 6 L và sử dụng 5 L. Người mua có thể bổ sung bằng chứng, dừng rồi mở lại hội thoại, hoặc tự gửi yêu cầu để AI chuyển trưởng nhóm. Tắt lời doạ trong mục kiểm thử để đối chiếu đường xử lý.
@@ -385,6 +385,14 @@ Ba nguồn đặt cạnh nhau giúp người mua kiểm tra phiên bản quyết
 
 Giờ đặt và sửa mô tả S01 dùng dữ liệu F01 ở §2.1. Bản demo giữ biên nhận và trạng thái xét của yêu cầu nộp đúng hạn khi đồng hồ qua 15:00.
 
+
+### §5.3. Đối chiếu bằng AI thật — bonus
+
+Nút **Gọi AI đối chiếu hồ sơ này** gửi mã ca S01/S02 và trạng thái nguồn/lời doạ tới máy chủ. Máy chủ lấy dữ liệu giả cố định và gọi OpenRouter bằng `openrouter/free` hoặc model có hậu tố `:free`. Model trả nhận định, bước đề xuất và trích dẫn nguồn dưới dạng JSON có cấu trúc. Giao diện hiển thị kết quả, model thực tế và ID phản hồi; không dùng kết quả để tự thực thi hoàn tiền, từ chối hay phạt shop.
+
+API key nằm trong biến môi trường máy chủ. Ảnh, ghi chú tự nhập và dữ liệu người thật không được gửi tới model. Trích dẫn được đối chiếu lại với nguồn đã cấp; kết quả không hợp lệ hoặc lỗi API được báo rõ, không giả thành thành công. Khi đổi ca hoặc nguồn/lời doạ, kết quả cũ không còn áp dụng.
+
+Sau lời gọi thành công, bằng chứng JSON có thể tải trên giao diện và được lưu tại `prototype/evidence/`. Log chứa input giả, model thực tế, ID phản hồi, thời điểm và kết quả; không chứa API key. [Bằng chứng S01](prototype/bonus-evidence-s01.json) ghi một lời gọi OpenRouter thật: model `liquid/lfm-2.5-2.6b:free`, ID `gen-1794479625-5g395Bd8vZSRvHuEBrIZ`, chi phí provider ghi nhận 0. Kết quả xác định chênh lệch 1,5 lít lúc đặt so với 1,0 L trên tem, trích nguồn hợp lệ và đề xuất người xem xét; không thực thi hành động tiền. Kiểm thử bằng API giả không được tính là bằng chứng bonus.
 
 ## §6. Tốt là gì — R6
 

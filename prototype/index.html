@@ -133,6 +133,13 @@ dialog input{max-width:100%}
       <p id="limitation" class="notice" hidden>AI không xác định được lý do mô tả bị sửa.</p>
       <div class="bubble"><h3>Người mua</h3><p id="buyer"></p></div>
       <div class="bubble ai"><h3>Trợ lý AI · không phải nhân viên</h3><p id="assistant"></p></div>
+      <div class="action-block" aria-labelledby="live-title">
+        <h3 id="live-title">Đối chiếu bằng AI thật · OpenRouter</h3>
+        <p class="muted">Chỉ gửi hồ sơ giả S01/S02. Ảnh và nội dung bổ sung của bạn không được gửi tới AI. AI không thực hiện hành động tiền.</p>
+        <div class="actions"><button id="live-run" type="button">Gọi AI đối chiếu hồ sơ này</button><button id="live-download" type="button" hidden>Tải bằng chứng JSON</button></div>
+        <p id="live-status" class="notice" role="status">Chưa gọi AI thật. Các bước hiện tại là mô phỏng.</p>
+        <ul id="live-evidence" class="packet"></ul>
+      </div>
     </section>
     <section class="panel" aria-labelledby="check-title">
       <h2 id="check-title"><span class="num">2</span> Bước tiếp theo</h2>
@@ -380,6 +387,7 @@ function canReview() {
 }
 
 function render() {
+  window.refreshLiveAnalysis?.();
   const data = currentCase();
   const s01 = data.order === 'DB-101';
   const missing = state.missing;
@@ -621,5 +629,6 @@ document.querySelectorAll('[data-request]').forEach(button => {
 });
 resetDemo();
 </script>
+<script src="bonus.js"></script>
 </body>
 </html>

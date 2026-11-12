@@ -1,0 +1,22 @@
+{
+  "S01": {
+    "order": "DB-101",
+    "buyer": "Lúc mua máy xay ghi 1,5 lít, nhận chỉ 1 lít. Giờ shop sửa trang rồi bảo tôi đọc nhầm.",
+    "sources": {
+      "snapshot": "01/11/2026 09:15: Cối chính 1,5 lít",
+      "current_listing": "Sửa 04/11/2026 20:40: Cối chính 1,0 lít",
+      "label": "Tem hàng nhận: 1,0 L",
+      "seller": "Trang hiện tại ghi 1 lít, tôi giao đúng."
+    }
+  },
+  "S02": {
+    "order": "DB-102",
+    "buyer": "Nồi ghi 6 lít mà đo chỉ 5 lít. Hoàn ngay",
+    "sources": {
+      "snapshot": "Dung tích danh định 6 L; dung tích sử dụng 5 L",
+      "label": "Dung tích danh định 6 L; dung tích sử dụng 5 L",
+      "measurement": "Người mua đo được 5 L",
+      "seller": "Shop đã gửi ảnh tem và đề nghị đối chiếu hai loại dung tích."
+    }
+  }
+}

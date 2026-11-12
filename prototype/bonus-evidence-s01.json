@@ -1,0 +1,58 @@
+{
+  "kind": "live_openrouter_response",
+  "run_id": "3f8640ca-dbd3-40a6-ab6c-89367061d1db",
+  "recorded_at": "2026-11-12T10:33:50.309346+00:00",
+  "duration_ms": 4907,
+  "requested_model": "openrouter/free",
+  "input": {
+    "caseId": "S01",
+    "order": "DB-101",
+    "buyer": "Lúc mua máy xay ghi 1,5 lít, nhận chỉ 1 lít. Giờ shop sửa trang rồi bảo tôi đọc nhầm.",
+    "sources": {
+      "snapshot": "01/11/2026 09:15: Cối chính 1,5 lít",
+      "current_listing": "Sửa 04/11/2026 20:40: Cối chính 1,0 lít",
+      "label": "Tem hàng nhận: 1,0 L",
+      "seller": "Trang hiện tại ghi 1 lít, tôi giao đúng."
+    }
+  },
+  "result": {
+    "assessment": "discrepancy",
+    "summary": "Tại case S01 (DB-101), có chênh lệch rõ rệt về dung tích cối chính. Khi đặt hàng vào 01/11/2026 09:15, snapshot ghi 'Cối chính 1,5 lít'. Tuy nhiên, snapshot hiện tại (04/11/2026 20:40) cho thấy 'Cối chính 1,0 lít' và nhãn hàng nhận ghi 'Tem hàng nhận: 1,0 L'. Sự khác biệt này tạo ra assessment discrepancy giữa thông số dung tích lúc đặt và hàng nhận. Dữ liệu từ snapshot và nhãn nhận được đều xác nhận sự sai lệch này.",
+    "next_step": "human_review",
+    "evidence": [
+      {
+        "source_id": "snapshot",
+        "quote": "01/11/2026 09:15: Cối chính 1,5 lít"
+      },
+      {
+        "source_id": "current_listing",
+        "quote": "04/11/2026 20:40: Cối chính 1,0 lít"
+      },
+      {
+        "source_id": "label",
+        "quote": "Tem hàng nhận: 1,0 L"
+      }
+    ]
+  },
+  "response_id": "gen-1794479625-5g395Bd8vZSRvHuEBrIZ",
+  "model": "liquid/lfm-2.5-2.6b:free",
+  "usage": {
+    "input_tokens": 448,
+    "input_tokens_details": {
+      "cached_tokens": 2
+    },
+    "output_tokens": 1342,
+    "output_tokens_details": {
+      "reasoning_tokens": 973
+    },
+    "total_tokens": 1790,
+    "cost": 0,
+    "is_byok": false,
+    "cost_details": {
+      "upstream_inference_cost": 0,
+      "upstream_inference_input_cost": 0,
+      "upstream_inference_output_cost": 0
+    }
+  },
+  "actions_executed": []
+}

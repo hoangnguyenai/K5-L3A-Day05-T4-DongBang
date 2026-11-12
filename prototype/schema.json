@@ -1,0 +1,57 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "assessment": {
+      "type": "string",
+      "enum": [
+        "discrepancy",
+        "insufficient_evidence",
+        "source_missing"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "next_step": {
+      "type": "string",
+      "enum": [
+        "human_review",
+        "ask_evidence",
+        "explain_limits"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "enum": [
+              "snapshot",
+              "current_listing",
+              "label",
+              "measurement",
+              "seller"
+            ]
+          },
+          "quote": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "quote"
+        ]
+      }
+    }
+  },
+  "required": [
+    "assessment",
+    "summary",
+    "next_step",
+    "evidence"
+  ]
+}
