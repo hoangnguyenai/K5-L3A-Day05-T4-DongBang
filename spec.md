@@ -118,10 +118,6 @@ Thứ tự ID giữ ổn định để bàn giao: S01–S02 là hai ca trọng t
 > **Một quyết định = bốn ý:** đã cân nhắc phương án nào · chọn phương án nào · vì sao · loại các phương án kia vì sao. Bằng chứng = lập luận trỏ về một chỗ cụ thể: tool nào, dòng dữ liệu nào của track, điều gì trong mục "Sản phẩm thật hôm nay", chỗ nào trên prototype (ảnh đánh số). Không chạy agent.
 
 ## §4. Mức tự chủ (chặng 4)
-
-AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo các điều kiện dưới đây. Người có thẩm quyền xử lý khiếu nại của sàn quyết định hoàn tiền hoặc đóng khiếu nại. Bộ phận chuyên trách xử lý việc phạt shop.
-
-## §4. Mức tự chủ (chặng 4)
 AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo các điều kiện dưới đây. Người có thẩm quyền xử lý khiếu nại của sàn quyết định hoàn tiền hoặc đóng khiếu nại. Bộ phận chuyên trách xử lý việc phạt shop.
 
 ### 4.1. Mức tự chủ của từng tool
@@ -153,9 +149,9 @@ AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo c
 
 | Kịch bản §2 | AI làm gì, người dùng thấy gì? | Cái sai có bị chặn? | Khi nào cần hỏi? Có phải chờ vô ích? |
 |---|---|---|---|
-| **T4-01 · Shop sửa mô tả sau khi bán** | AI đối chiếu bản mô tả lúc đặt của đúng đơn. Nếu thiếu bản đó và chưa thể bổ sung, AI hiển thị “Chưa có bản mô tả lúc đặt để đối chiếu” và chuyển hồ sơ kèm lý do. | **Có.** Trang hiện tại không đủ căn cứ để hoàn tiền hoặc đóng khiếu nại. Hai thao tác đều cần người duyệt. | Nếu chưa rõ đơn hoặc chi tiết bị sai, AI hỏi một câu trước. Khi đơn đã rõ và thiếu căn cứ quyết định, AI tự chuyển hồ sơ để người có thẩm quyền xem xét. |
-| **T4-02 · Tem khớp mô tả, người mua dọa bóc phốt** | AI hiển thị nội dung đã đối chiếu và mục bằng chứng còn thiếu. Shop thấy nội dung khiếu nại liên quan và hạn phản hồi. Nếu hai bên vẫn tranh chấp, AI chuyển hồ sơ. | **Có.** Lời đe dọa không kích hoạt hoàn tiền. Tem khớp cũng chưa đủ để AI tự đóng hồ sơ khi còn bằng chứng cần xem. | AI chỉ yêu cầu đúng bên bổ sung đúng mục còn thiếu. Thời gian chờ dành cho phản hồi của hai bên và quyết định của người có thẩm quyền. |
-| **T4-03 · Giao sai size, shop đã xác nhận** | Khi đã xác định đúng đơn, AI dùng xác nhận có sẵn trong hồ sơ, hướng dẫn người mua gửi yêu cầu ngay và chuẩn bị đề xuất hoàn. | **Có.** Hồ sơ có thể được soạn ngay. Tiền chỉ được chuyển sau khi người có thẩm quyền duyệt. | Người mua không phải nộp lại xác nhận của shop hoặc chờ mới được hướng dẫn. Khâu chờ duyệt bắt đầu ở quyết định chuyển tiền. |
+| **S01/F01 · bản mô tả lúc đặt có sẵn và ghi 1,5 L** | AI đối chiếu bản mô tả lúc đặt của đúng đơn. Nếu thiếu bản đó và chưa thể bổ sung, AI hiển thị “Chưa có bản mô tả lúc đặt để đối chiếu” và chuyển hồ sơ kèm lý do. | **Có.** Trang hiện tại không đủ căn cứ để hoàn tiền hoặc đóng khiếu nại. Hai thao tác đều cần người duyệt. | Nếu chưa rõ đơn hoặc chi tiết bị sai, AI hỏi một câu trước. Khi đơn đã rõ và thiếu căn cứ quyết định, AI tự chuyển hồ sơ để người có thẩm quyền xem xét. |
+| **S02/F02 · Tem khớp mô tả, người mua dọa bóc phốt** | AI hiển thị nội dung đã đối chiếu và mục bằng chứng còn thiếu. Shop thấy nội dung khiếu nại liên quan và hạn phản hồi. Nếu hai bên vẫn tranh chấp, AI chuyển hồ sơ. | **Có.** Lời đe dọa không kích hoạt hoàn tiền. Tem khớp cũng chưa đủ để AI tự đóng hồ sơ khi còn bằng chứng cần xem. | AI chỉ yêu cầu đúng bên bổ sung đúng mục còn thiếu. Thời gian chờ dành cho phản hồi của hai bên và quyết định của người có thẩm quyền. |
+| **F03 · Giao sai size, shop đã xác nhận** | Khi đã xác định đúng đơn, AI dùng xác nhận có sẵn trong hồ sơ, hướng dẫn người mua gửi yêu cầu ngay và chuẩn bị đề xuất hoàn. | **Có.** Hồ sơ có thể được soạn ngay. Tiền chỉ được chuyển sau khi người có thẩm quyền duyệt. | Người mua không phải nộp lại xác nhận của shop hoặc chờ mới được hướng dẫn. Khâu chờ duyệt bắt đầu ở quyết định chuyển tiền. |
 
 ### 4.4. Tách bước soạn đề xuất và thực hiện hoàn tiền
 
