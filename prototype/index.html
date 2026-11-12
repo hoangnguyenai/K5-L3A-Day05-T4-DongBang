@@ -34,7 +34,7 @@ h3{font-size:15px}
 .deadline{padding:10px 16px;border-radius:11px;background:var(--warm);color:var(--amber)}
 .deadline strong{display:block;font-size:21px}
 .steps{display:flex;flex-wrap:wrap;gap:24px;margin:19px 0 15px;padding:10px 0;border-block:1px solid var(--line);color:var(--muted);font-size:14px}
-.steps [aria-current=step]{color:var(--green);font-weight:750}
+
 .grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;align-items:start}
 .panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}
 .panel > * + *{margin-top:12px}
@@ -70,12 +70,33 @@ textarea{width:100%;resize:vertical;margin:7px 0}
 .packet li+li{margin-top:5px}
 @media(max-width:850px){.grid{grid-template-columns:1fr}.title{align-items:flex-start}}
 @media(max-width:480px){main,.bar{padding-left:13px;padding-right:13px}.panel{padding:13px}.evidence{grid-template-columns:1fr}.toolbar button{margin-left:0}}
+#change-order{margin-top:8px;font-size:13px}
+.deadline-group,.preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.deadline.secondary,.neutral{background:#edf1f0;color:var(--muted)}
+.previous-listing{text-decoration:line-through;text-decoration-color:#8b9993}
+.steps [data-active]{color:var(--green);font-weight:750}
+#assistant{white-space:pre-line}
+dialog{color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:15px;padding:22px;width:min(530px,calc(100% - 28px))}
+dialog::backdrop{background:#15383080}
+dialog label{display:block;margin-top:10px;font-weight:650}
+dialog input{max-width:100%}
+.dialog-actions{margin-top:14px}
+.confirmation{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:10px;align-items:start}
+.confirmation dd{margin:0}
+.confirmation small{display:block;margin-top:4px}
+#buyer-actions{margin-top:8px}
+.confirmation dt{font-weight:650}
+.mock-label{display:inline-block;background:#f0f1ef;border:1px solid #aab7b0;border-radius:4px;padding:6px 10px;font:700 16px/1.35 "Segoe UI",sans-serif}
+.sim details{margin-top:12px}
+.review-photos img{display:block;max-width:100%;max-height:180px;margin-top:8px;border-radius:6px}
+@media(max-width:480px){.deadline-group,.preview-grid{grid-template-columns:1fr}.confirmation{grid-template-columns:1fr;gap:4px}}
+
 </style>
 </head>
 <body>
 <header><div class="bar">
   <div class="brand"><span class="mark" aria-hidden="true">↔</span> Hỗ trợ đơn hàng</div>
-  <span class="demo">Đông Bằng · Lab 5 · Dữ liệu giả lập</span>
+  <span class="demo">Đồng Bằng · Lab 5 · Dữ liệu giả lập</span>
 </div></header>
 <main>
   <div class="toolbar">
@@ -87,166 +108,324 @@ textarea{width:100%;resize:vertical;margin:7px 0}
     <button id="reset" type="button">Bắt đầu lại</button>
   </div>
   <div class="title">
-    <div><p class="eyebrow" id="order"></p><h1>Hàng không đúng mô tả</h1><p class="muted" id="product"></p></div>
-    <div class="deadline"><strong id="remaining"></strong><span>Hạn gửi yêu cầu · 15:00, 13/11/2026</span></div>
+    <div>
+      <p class="eyebrow" id="order"></p><h1>Hàng không đúng mô tả</h1><p class="muted" id="product"></p>
+      <button id="change-order" type="button">Không phải đơn này</button>
+    </div>
+    <div class="deadline-group">
+      <div class="deadline"><span>Hạn gửi yêu cầu · Người mua</span><strong id="remaining"></strong><span>15:00, 13/11/2026</span></div>
+      <div class="deadline secondary"><span>Hạn bổ sung/phản hồi · Shop</span><strong id="reply-deadline"></strong><span id="reply-status"></span></div>
+    </div>
   </div>
-  <nav class="steps" aria-label="Tiến trình hồ sơ">
-    <span id="step-check" aria-current="step">Đối chiếu thông tin</span>
-    <span id="step-review">Nhân viên xem xét</span>
+  <nav class="steps" aria-label="Trạng thái hồ sơ">
+    <span>① Trao đổi với AI</span><span>② Ghi nhận yêu cầu</span><span>③ Chờ phản hồi</span>
+    <span>④ Chuyển nhân viên</span><span>⑤ Quyết định đã thực hiện</span>
   </nav>
   <div class="grid">
     <section class="panel" aria-labelledby="evidence-title">
-      <div class="section-head"><h2 id="evidence-title"><span class="num">1</span> Căn cứ đối chiếu</h2><span id="signal" class="chip wait"></span></div>
+      <div class="section-head"><h2 id="evidence-title"><span class="num">1</span> <span id="evidence-heading"></span></h2><span id="signal" class="chip wait"></span></div>
       <div class="evidence">
-        <div class="card"><h3>Mô tả lúc đặt</h3><strong id="snapshot"></strong><small id="snapshot-meta"></small></div>
-        <div class="card"><h3 id="listing-title"></h3><strong id="listing"></strong><small id="listing-meta"></small></div>
+        <div class="card"><h3>Mô tả lúc đặt</h3><span id="source-tag" class="chip">Căn cứ xét</span><strong id="snapshot"></strong><small id="snapshot-meta"></small></div>
+        <div class="card neutral"><h3 id="listing-title"></h3><strong id="listing"></strong><small id="listing-meta"></small></div>
         <div class="card"><h3>Ảnh tem hàng nhận</h3><strong id="label"></strong><small id="label-meta"></small></div>
       </div>
       <p class="shop"><strong>Shop phản hồi</strong> <span id="seller"></span></p>
+      <p id="limitation" class="notice" hidden>AI không xác định được lý do mô tả bị sửa.</p>
       <div class="bubble"><h3>Người mua</h3><p id="buyer"></p></div>
-      <div class="bubble ai"><h3>Trợ lý AI</h3><p id="assistant"></p></div>
-      <form id="correction" hidden>
-        <label for="correction-text"><strong>Sửa hoặc bổ sung thông tin</strong></label>
-        <textarea id="correction-text" rows="3" maxlength="500" placeholder="Ví dụ: ảnh tem và thông số in trên hộp có nội dung khác nhau."></textarea>
-        <div class="actions"><button class="primary" type="submit">Lưu thông tin</button><button id="cancel" type="button">Huỷ</button></div>
-      </form>
-      <p id="saved" class="result" hidden></p>
+      <div class="bubble ai"><h3>Trợ lý AI · không phải nhân viên</h3><p id="assistant"></p></div>
     </section>
-    <section class="panel" id="check" aria-labelledby="check-title">
+    <section class="panel" aria-labelledby="check-title">
       <h2 id="check-title"><span class="num">2</span> Bước tiếp theo</h2>
+      <p id="status" class="result" role="status"></p>
+      <p id="receipt" class="notice" hidden></p>
+      <p id="reminder" class="notice" hidden>Nhắc lúc 12:00, 13/11 · Bạn còn 3 giờ để gửi yêu cầu.</p>
       <div class="action-block">
-        <span class="chip">AI tự làm</span>
-        <p id="next"></p>
-        <div class="actions">
-          <button id="send" class="primary" type="button">Chuyển nhân viên xem xét</button>
-          <button type="button" data-edit>Sửa hoặc bổ sung</button>
-        </div>
+        <span class="chip">AI tự làm</span><p id="next"></p>
       </div>
+      <div class="action-block">
+        <h3>Việc bạn có thể làm</h3>
+        <div class="actions" id="buyer-actions">
+          <button id="prepare" class="primary" type="button"></button>
+          <button id="add-evidence" type="button"></button>
+          <button id="end-chat" type="button">Đã hiểu, không gửi yêu cầu</button>
+        </div>
+        <p id="reopen-hint" class="muted" hidden>Bạn có thể mở lại và gửi yêu cầu đến 15:00 ngày 13/11.</p>
+        <button id="reopen" type="button" hidden>Mở lại hội thoại</button>
+      </div>
+      <p id="evidence-added" class="muted" hidden></p>
       <div class="action-block">
         <span class="chip wait">Cần người duyệt</span>
         <p>Nhân viên có thẩm quyền quyết định hoàn tiền hoặc đóng khiếu nại sau khi xem căn cứ của hai bên.</p>
       </div>
     </section>
-    <section class="panel" id="review" aria-labelledby="review-title" hidden>
-      <h2 id="review-title" tabindex="-1"><span class="num">3</span> Theo dõi hồ sơ</h2>
-      <div class="actions"><span class="chip">Đã chuyển trưởng nhóm</span><span class="chip wait">Chờ nhân viên xem xét</span></div>
-      <p id="handoff" class="result"></p>
-      <p class="notice" id="review-deadline"></p>
-      <div class="action-block">
-        <span class="chip wait">Cần người duyệt</span>
-        <p>Hồ sơ đang mở. Hoàn tiền hoặc đóng khiếu nại cần quyết định của nhân viên có thẩm quyền.</p>
-        <details>
-          <summary>Hồ sơ người duyệt nhận</summary>
-          <ul class="packet" id="packet"></ul>
-        </details>
-      </div>
-      <button type="button" data-edit>Sửa hoặc bổ sung</button>
-    </section>
   </div>
   <details class="sim">
-    <summary>Thử tình huống biên</summary>
+    <summary>Điều khiển kiểm thử</summary>
     <div class="actions">
       <label><input id="missing" type="checkbox"> Lỗi tải bản lúc đặt</label>
-      <label><input id="urgent" type="checkbox"> Còn 10 phút gửi yêu cầu</label>
-      <label id="pressure-control" hidden><input id="pressure" type="checkbox" checked> Người mua dọa bóc phốt</label>
+      <label id="pressure-control"><input id="pressure" type="checkbox" checked> Người mua doạ bóc phốt</label>
+      <label id="already-control"><input id="already" type="checkbox"> S01 đã gửi yêu cầu trước đó</label>
+      <label for="time">Thời điểm mô phỏng</label>
+      <select id="time">
+        <option value="0">12/11 · 14:00</option>
+        <option value="1320">13/11 · 12:00 (mốc nhắc)</option>
+        <option value="1490">13/11 · 14:50 (còn 10 phút)</option>
+        <option value="1501">13/11 · 15:01 (quá hạn)</option>
+      </select>
     </div>
     <div class="actions">
-      <button type="button" data-request="refund">Thử “Hoàn ngay”</button>
-      <button type="button" data-request="close">Thử “Đóng ngay”</button>
-      <button type="button" data-request="penalty">Thử “Phạt shop”</button>
+      <button type="button" data-request="refund">Mô phỏng tin nhắn “Hoàn ngay”</button>
+      <button type="button" data-request="close">Mô phỏng tin nhắn “Đóng ngay”</button>
+      <button type="button" data-request="penalty">Mô phỏng tin nhắn “Phạt shop”</button>
     </div>
+    <p id="feedback" role="status"></p>
+    <details id="audiences">
+      <summary>Xem thông báo mô phỏng theo bên nhận</summary>
+      <div class="preview-grid">
+        <div><h3>Trưởng nhóm</h3><ul class="packet" id="packet"></ul><div id="review-photos" class="review-photos"></div></div>
+        <div><h3>Shop</h3><ul class="packet" id="shop-packet"></ul></div>
+      </div>
+    </details>
   </details>
-  <p id="feedback" role="status"></p>
 </main>
+
+<dialog id="confirm" aria-labelledby="confirm-title">
+  <form method="dialog">
+    <h2 id="confirm-title"><span class="num">3</span> Kiểm tra yêu cầu trả hàng</h2>
+    <dl class="confirmation">
+      <dt>Đơn hàng</dt><dd id="confirm-order"></dd>
+      <dt>Lý do đã điền</dt><dd id="confirm-reason"></dd>
+      <dt>Ảnh tem có sẵn trong hồ sơ</dt><dd><div class="mock-label" id="confirm-label" role="img"></div><small>Tem minh hoạ từ dữ liệu Lab 5</small></dd>
+    </dl>
+    <p class="notice">Hạn gửi yêu cầu · 15:00, 13/11/2026. Hệ thống ghi nhận khi bạn bấm gửi.</p>
+    <div class="actions dialog-actions"><button value="cancel" autofocus>Quay lại</button><button id="submit-request" class="primary" type="button">Gửi yêu cầu</button></div>
+  </form>
+</dialog>
+<dialog id="attachment" aria-labelledby="attachment-title">
+  <form id="attachment-form">
+    <h2 id="attachment-title">Bổ sung bằng chứng</h2>
+    <label for="photo">Ảnh mới</label>
+    <input id="photo" type="file" accept="image/*">
+    <label for="correction-text">Mô tả bằng chứng</label>
+    <textarea id="correction-text" rows="3" maxlength="500" placeholder="Ghi điểm khác biệt cần xem xét."></textarea>
+    <p class="muted">Bản demo chỉ chia sẻ thông báo về bằng chứng với shop. Ảnh gốc và nội dung nhập được giữ trong bản xem thử hồ sơ.</p>
+    <div class="actions dialog-actions"><button type="submit" formmethod="dialog" formnovalidate>Huỷ</button><button id="save-evidence" class="primary" type="submit">Lưu bằng chứng</button></div>
+  </form>
+</dialog>
+<dialog id="order-picker" aria-labelledby="picker-title">
+  <form method="dialog">
+    <h2 id="picker-title">Chọn lại đơn cần hỗ trợ</h2>
+    <p>Chỉ thông tin thuộc đơn mới được dùng khi tiếp tục.</p>
+    <div class="actions dialog-actions">
+      <button id="select-other" type="button"></button>
+      <button value="cancel" autofocus>Quay lại đơn này</button>
+    </div>
+  </form>
+</dialog>
 <script>
 const cases = {
   S01: {
     order: 'DB-101', product: 'Máy xay', price: '890.000 đ',
-    snapshot: 'Cối chính 1,5 L', snapshotMeta: 'Bản lưu khi đặt · phiên bản v1',
-    listingTitle: 'Mô tả hiện tại', listing: 'Cối chính 1,0 L', listingMeta: 'Phiên bản v2 · cập nhật sau khi đặt',
-    label: '1,0 L', labelMeta: 'Đọc từ tem hàng người mua nhận',
+    snapshot: 'Cối chính 1,5 lít', snapshotMeta: '01/11 09:15 · Phiên bản v1',
+    listingTitle: 'Mô tả hiện tại', listing: 'Cối chính 1,0 lít', listingMeta: 'Sửa 04/11 20:40 · Phiên bản v2 · Sau đặt',
+    label: '1,0 L', labelMeta: 'Ảnh do người mua cung cấp',
     seller: '“Trang hiện tại ghi 1 lít, tôi giao đúng.”',
     buyer: 'Lúc mua máy xay ghi 1,5 lít, nhận chỉ 1 lít. Giờ shop sửa trang rồi bảo tôi đọc nhầm.',
-    signal: 'Có chênh lệch',
-    response: 'Bản lúc bạn đặt ghi cối chính 1,5 L. Trang hiện tại và tem hàng nhận đều ghi 1,0 L. Shop đang dựa vào bản cập nhật sau khi bạn đặt. Mình đã thấy chênh lệch và có thể chuyển cả hai bản cùng ảnh tem để nhân viên xem xét.',
-    next: 'AI tập hợp bản lúc đặt, trang hiện tại, ảnh tem và phản hồi của shop để chuyển trưởng nhóm.',
-    reason: 'Cần xem xét chênh lệch giữa bản lúc đặt và tem hàng nhận.'
+    reason: 'Dung tích trên tem khác mô tả lúc đặt.'
   },
   S02: {
     order: 'DB-102', product: 'Nồi chiên', price: '1.290.000 đ',
-    snapshot: 'Danh định 6 L · sử dụng 5 L', snapshotMeta: 'Bản lưu khi đặt',
-    listingTitle: 'Số đo người mua', listing: '5 L', listingMeta: 'Người mua báo dung tích đo được',
-    label: 'Danh định 6 L · sử dụng 5 L', labelMeta: 'Đọc từ ảnh tem do shop gửi',
+    snapshot: 'Dung tích danh định 6 L; dung tích sử dụng 5 L', snapshotMeta: 'Bản lưu khi đặt',
+    listingTitle: 'Số bạn đo', listing: '5 L', listingMeta: 'Khớp dung tích sử dụng',
+    label: 'Danh định 6 L · sử dụng 5 L', labelMeta: 'Ảnh shop đã gửi · không cần gửi lại',
     seller: 'Shop đã gửi ảnh tem và đề nghị đối chiếu hai loại dung tích.',
     buyer: 'Nồi ghi 6 lít mà đo chỉ 5 lít. Hoàn ngay',
-    signal: 'Chưa đủ căn cứ',
-    response: 'Bản lúc đặt và ảnh tem đều ghi dung tích danh định 6 L, dung tích sử dụng 5 L. Số đo 5 L khớp dung tích sử dụng. Với thông tin hiện có, mình chưa xác định được hàng giao sai mô tả. Bạn có thể bổ sung điểm khác biệt hoặc chuyển nhân viên nếu vẫn còn tranh chấp.',
-    next: 'Nếu vẫn còn tranh chấp, AI có thể chuyển hồ sơ kèm phản hồi đã có của shop và thông tin bạn bổ sung.',
-    reason: 'Người mua yêu cầu xem xét thêm sau khi đối chiếu hai loại dung tích.'
+    reason: 'Người mua đề nghị xem xét sau khi đối chiếu hai loại dung tích.'
   }
 };
 
 const byId = id => document.getElementById(id);
 const write = (id, value) => { byId(id).textContent = value; };
-let submitted = false;
-let correction = '';
-let editButton;
+const currentCase = () => cases[byId('case').value];
+const time = () => Number(byId('time').value);
+const deadline = 1500;
+const baseTime = Date.parse('2026-11-12T14:00:00+07:00');
+const dateFormat = new Intl.DateTimeFormat('vi-VN', {
+  timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
+});
+let state;
+
+function formatTime(minutes) {
+  const parts = dateFormat.formatToParts(new Date(baseTime + minutes * 60000));
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return values.hour + ':' + values.minute + ', ' + values.day + '/' + values.month;
+}
+
+function notifyShop(at, message) {
+  state.shop = { at, message };
+}
+
+function transfer(at) {
+  if (state.transferredAt !== null) return;
+  state.transferredAt = at;
+}
+
+function resetCase() {
+  for (const evidence of state?.evidence ?? []) {
+    if (evidence.photo) URL.revokeObjectURL(evidence.photo);
+  }
+  state = { sentAt: null, transferredAt: null, shop: null, ended: false, evidence: [] };
+  byId('missing').checked = false;
+  byId('pressure').checked = true;
+  byId('already').checked = false;
+  byId('time').value = '0';
+  byId('audiences').open = false;
+  announce('');
+  updateScenario();
+}
+
+function updateScenario() {
+  const s01 = byId('case').value === 'S01';
+  if (s01 || byId('missing').checked) transfer(2);
+  if (s01 && !byId('missing').checked) {
+    notifyShop(2, 'Hồ sơ DB-101 đã chuyển nhân viên Shopee vì hai bên chưa thống nhất. Căn cứ xét là mô tả lúc người mua đặt (01/11 09:15): “Cối chính 1,5 lít”. Mô tả đã sửa lúc 04/11 20:40 không dùng làm căn cứ cho đơn này. Bạn có thể bổ sung giải thích hoặc chứng cứ đến 14:02 13/11. Chưa có quyết định.');
+  } else if (s01) {
+    state.shop = null;
+  }
+  render();
+}
+
+function assistantReply({ s01, missing, pressure, remaining, sent, expired }) {
+  const intro = 'Mình là trợ lý AI của Shopee, không phải nhân viên xử lý khiếu nại.';
+  const due = '15:00 ngày 13/11';
+  const timing = expired ? 'Hạn gửi yêu cầu đã hết lúc ' + due + '.' : 'Hạn gửi yêu cầu: ' + due + ' (' + remaining.toLowerCase() + ').';
+  if (missing) {
+    const source = 'Mình chưa mở được mô tả lúc bạn đặt nên chưa đối chiếu được. Mình sẽ không dùng trang hiện tại thay thế vì shop có thể đã sửa. Mình đã chuyển hồ sơ cho trưởng nhóm để xác minh; hiện chưa có quyết định.';
+    return [intro, source, sent ? 'Yêu cầu của bạn đã được ghi nhận.' : expired ? timing : 'Bạn vẫn cần gửi yêu cầu trước ' + due + '.'].join('\n\n');
+  }
+  if (s01) {
+    const next = sent ? 'Yêu cầu của bạn đã được ghi nhận. Hiện chưa có quyết định.'
+      : expired ? timing
+      : 'Việc bạn cần làm: gửi yêu cầu trả hàng trước ' + due + ' (' + remaining.toLowerCase() + '). Mình đã điền sẵn đơn, lý do và ảnh tem; bạn chỉ cần kiểm tra rồi bấm gửi. Việc chuyển cho nhân viên không thay cho bước này và không kéo dài hạn.';
+    return [
+      intro,
+      'Với đơn DB-101 (máy xay), mình thấy:\n• Mô tả lúc bạn đặt (01/11 09:15): “Cối chính 1,5 lít”\n• Mô tả hiện tại của shop: “Cối chính 1,0 lít”, được sửa lúc 04/11 20:40, sau khi bạn đặt\n• Tem trên hàng bạn nhận: “1,0 L”',
+      'Hồ sơ được đối chiếu với mô tả lúc bạn đặt, không theo trang hiện tại. Mình thấy con số trên tem khác con số trong mô tả lúc đặt. Lý do có chênh lệch này thì mình không xác định được.',
+      'Shop đã phản hồi rằng hàng khớp trang hiện tại, tức là hai bên chưa thống nhất. Mình không tự quyết hoàn tiền hay từ chối. Mình đã chuyển hồ sơ cho trưởng nhóm xử lý khiếu nại, kèm cả hai phiên bản mô tả và phản hồi của shop. Hiện chưa có quyết định.',
+      next
+    ].join('\n\n');
+  }
+  const reply = [
+    intro,
+    'Với đơn DB-102 (nồi chiên), mô tả lúc bạn đặt ghi: “Dung tích danh định 6 L; dung tích sử dụng 5 L”. Tem trên nồi bạn nhận ghi đúng hai con số này.\n• 6 L là dung tích danh định\n• 5 L là dung tích sử dụng, khớp với số bạn đo được',
+    'Với bằng chứng hiện có của bạn và của shop, mình chưa thấy đủ căn cứ để xác định nồi sai mô tả, nên mình không đề xuất hoàn tiền. Mình cũng không đóng khiếu nại của bạn.',
+    sent ? 'Yêu cầu của bạn đã được ghi nhận và chuyển trưởng nhóm. Hiện chưa có quyết định.'
+      : expired ? timing
+      : 'Nếu nồi khác mô tả ở điểm nào khác ngoài dung tích, bạn chụp chỗ đó gửi thêm. Nếu bạn vẫn không đồng ý, bạn có thể gửi yêu cầu để nhân viên Shopee xem cả bằng chứng của bạn và của shop. ' + timing
+  ];
+  if (pressure) reply.push('Bạn có quyền đánh giá công khai. Điều đó không thay đổi cách hồ sơ này được xét.');
+  return reply.join('\n\n');
+}
+
+function showPacket(id, entries) {
+  byId(id).replaceChildren(...entries.map(entry => {
+    const item = document.createElement('li');
+    item.textContent = entry;
+    return item;
+  }));
+}
 
 function render() {
-  const caseId = byId('case').value;
-  const data = cases[caseId];
+  const data = currentCase();
+  const s01 = data.order === 'DB-101';
   const missing = byId('missing').checked;
-  const urgent = byId('urgent').checked;
-  const buyer = caseId === 'S02'
-    ? data.buyer + (byId('pressure').checked ? ', không tôi bóc phốt sàn.' : '.')
-    : data.buyer;
-  const reason = missing ? 'Chưa có bản mô tả lúc đặt để đối chiếu.' : data.reason;
-  const remaining = urgent ? 'Còn 10 phút' : 'Còn 25 giờ';
+  const pressure = !s01 && byId('pressure').checked;
+  const now = time();
+  const sentAt = s01 && byId('already').checked ? 0 : state.sentAt;
+  const sent = sentAt !== null;
+  const transferred = state.transferredAt !== null;
+  const expired = now >= deadline;
+  const remaining = expired ? 'Đã hết hạn' : now === 0 ? 'Còn 25 giờ' : now === 1320 ? 'Còn 3 giờ' : 'Còn 10 phút';
+  const replyDue = state.shop === null ? null : state.shop.at + 1440;
+  const waiting = replyDue !== null && now < replyDue;
+  const buyer = s01 ? data.buyer : data.buyer + (pressure ? ', không tôi bóc phốt sàn.' : '.');
 
   write('order', 'Đơn ' + data.order);
-  write('product', data.product + ' · ' + data.price + ' · Nhận hàng 15:00, 06/11/2026');
+  write('product', data.product + ' · ' + data.price);
   write('remaining', remaining);
-  write('signal', missing ? 'Thiếu bản lúc đặt' : data.signal);
+  write('reply-deadline', replyDue === null ? 'Chưa mở hạn' : formatTime(replyDue));
+  write('reply-status', replyDue === null ? 'Chưa có thông báo cần phản hồi' : waiting ? 'Đang chờ shop bổ sung/phản hồi' : 'Đã hết hạn phản hồi');
+  write('evidence-heading', s01 ? 'Đối chiếu mô tả' : 'Trích mô tả lúc đặt');
+  write('signal', missing ? 'Thiếu bản lúc đặt' : s01 ? 'Có chênh lệch' : 'Chưa đủ căn cứ');
   write('snapshot', missing ? 'Chưa truy cập được' : data.snapshot);
-  write('snapshot-meta', missing ? 'Cần xác minh bản lưu' : data.snapshotMeta);
+  write('snapshot-meta', missing ? 'Chờ xác minh bản lưu' : data.snapshotMeta);
+  byId('source-tag').hidden = missing;
   write('listing-title', data.listingTitle);
   write('listing', data.listing);
+  byId('listing').classList.toggle('previous-listing', s01);
   write('listing-meta', data.listingMeta);
   write('label', data.label);
   write('label-meta', data.labelMeta);
   write('seller', data.seller);
   write('buyer', '“' + buyer + '”');
-  write('assistant', missing
-    ? reason + ' Mình chưa thể xác định mô tả khi bạn mua. Mình có thể chuyển hồ sơ để xác minh bản lưu.'
-    : data.response);
-  write('next', (missing ? 'AI chuyển hồ sơ kèm lý do thiếu bản lúc đặt.' : data.next)
-    + (urgent ? ' Hạn gửi yêu cầu còn 10 phút. Việc chuyển hồ sơ giữ nguyên hạn này.' : ''));
+  write('assistant', assistantReply({ s01, missing, pressure, remaining, sent, expired }));
+  byId('limitation').hidden = !s01 || missing;
 
-  byId('check').hidden = submitted;
-  byId('review').hidden = !submitted;
-  byId('pressure-control').hidden = caseId !== 'S02';
-  byId(submitted ? 'step-check' : 'step-review').removeAttribute('aria-current');
-  byId(submitted ? 'step-review' : 'step-check').setAttribute('aria-current', 'step');
-  write('handoff', reason + ' Trưởng nhóm tiếp nhận để điều phối nhân viên có thẩm quyền.');
-  write('review-deadline', remaining + ' để gửi yêu cầu. Hạn này giữ nguyên khi chuyển nhân viên. Nếu bạn chưa gửi yêu cầu trả hàng/hoàn tiền, hãy gửi trong chi tiết đơn trước hạn.');
+  const stages = [!transferred && !state.ended, sent, waiting, transferred, false];
+  document.querySelectorAll('.steps span').forEach((step, index) => {
+    step.toggleAttribute('data-active', stages[index]);
+  });
+  write('status', transferred ? '④ Đã chuyển trưởng nhóm · Chưa có quyết định'
+    : state.ended ? 'Đã kết thúc hội thoại · Chưa gửi yêu cầu'
+    : waiting ? '③ Đang chờ shop phản hồi · Chưa có quyết định'
+    : '① Chưa đủ căn cứ · Chưa có quyết định');
+  byId('receipt').hidden = !sent;
+  write('receipt', sent ? '② Đã gửi yêu cầu, ghi nhận lúc ' + formatTime(sentAt) + '.' : '');
+  byId('reminder').hidden = sent || now < 1320;
+  write('next', transferred
+    ? (missing ? 'Trưởng nhóm xác minh bản lưu lúc đặt.' : 'Trưởng nhóm nhận hồ sơ để điều phối nhân viên xử lý.')
+    : 'Bạn có thể bổ sung bằng chứng hoặc gửi yêu cầu để nhân viên xem xét.');
+  byId('prepare').hidden = sent || expired;
+  write('prepare', s01 ? 'Kiểm tra & gửi yêu cầu trả hàng (đã điền sẵn)' : 'Vẫn gửi yêu cầu để nhân viên xét');
+  write('add-evidence', s01 ? 'Bổ sung bằng chứng' : 'Gửi thêm bằng chứng');
+  byId('end-chat').hidden = s01 || transferred || sent;
+  byId('buyer-actions').hidden = state.ended;
+  byId('reopen-hint').hidden = !state.ended || expired;
+  byId('reopen').hidden = !state.ended;
+  byId('evidence-added').hidden = state.evidence.length === 0;
+  write('evidence-added', 'Bằng chứng bổ sung trong hồ sơ: ' + state.evidence.length + ' mục.');
+  byId('pressure-control').hidden = s01;
+  byId('already-control').hidden = !s01;
 
-  const entries = [
-    'Đơn ' + data.order + ' · Giá trị đơn ' + data.price + '.',
-    'Mô tả lúc đặt · ' + (missing ? 'chưa truy cập được' : data.snapshot + ' · ' + data.snapshotMeta),
+  const reviewEntries = [
+    'Đã chuyển lúc ' + formatTime(state.transferredAt) + ' · Đơn ' + data.order + ' · ' + data.price,
+    'Mô tả lúc đặt · ' + (missing ? 'Chưa truy cập được' : data.snapshot + ' · ' + data.snapshotMeta),
     data.listingTitle + ' · ' + data.listing + ' · ' + data.listingMeta,
-    'Ảnh tem · ' + data.label + ' · ' + data.labelMeta,
+    'Tem · ' + data.label + ' · ' + data.labelMeta,
     'Người mua · ' + buyer,
     'Shop · ' + data.seller,
-    'Lý do chuyển · ' + reason + (urgent ? ' Còn 10 phút đến hạn gửi yêu cầu.' : '')
+    'Hạn gửi yêu cầu · 15:00, 13/11/2026 · Hạn phản hồi · ' + (replyDue === null ? 'Chưa mở hạn' : formatTime(replyDue))
   ];
-  if (correction) entries.push('Bổ sung của người mua · ' + correction);
-  byId('packet').replaceChildren(...entries.map(entry => {
-    const item = document.createElement('li');
-    item.textContent = entry;
-    return item;
+  if (sent) reviewEntries.push('Yêu cầu ghi nhận lúc ' + formatTime(sentAt) + '.');
+  if (missing) reviewEntries.push('Cờ · Thiếu bản mô tả lúc đặt.');
+  if (s01 && !missing) reviewEntries.push('Cờ · Mô tả sửa sau đặt hàng · Hai bên chưa thống nhất.');
+  if (pressure) reviewEntries.push('Cờ · Có lời doạ, không phải căn cứ.');
+  for (const evidence of state.evidence) {
+    reviewEntries.push('Bằng chứng bổ sung · ' + (evidence.photo ? 'Có ảnh đính kèm. ' : '') + evidence.note);
+  }
+  showPacket('packet', transferred ? reviewEntries : ['Chưa chuyển hồ sơ.']);
+  const photos = transferred ? state.evidence.filter(evidence => evidence.photo) : [];
+  byId('review-photos').replaceChildren(...photos.map(evidence => {
+    const image = document.createElement('img');
+    image.src = evidence.photo;
+    image.alt = 'Ảnh bằng chứng bổ sung';
+    return image;
   }));
-  byId('saved').hidden = !correction;
-  write('saved', (submitted ? 'Đã cập nhật hồ sơ đang chờ xem xét · ' : 'Thông tin bổ sung · ') + correction);
+  showPacket('shop-packet', state.shop === null ? ['Chưa có thông báo mới.'] : [
+    'Đã thông báo lúc ' + formatTime(state.shop.at),
+    state.shop.message,
+    'Hạn bổ sung/phản hồi · ' + formatTime(replyDue)
+  ]);
 }
 
 function announce(message) {
@@ -254,62 +433,92 @@ function announce(message) {
   write('feedback', message);
 }
 
-function resetCase() {
-  submitted = false;
-  correction = '';
-  byId('missing').checked = false;
-  byId('urgent').checked = false;
-  byId('pressure').checked = true;
-  byId('correction').hidden = true;
-  byId('review').querySelector('details').open = false;
-  announce('');
-  render();
-}
-
 byId('case').addEventListener('change', resetCase);
 byId('reset').addEventListener('click', resetCase);
-for (const id of ['missing', 'urgent', 'pressure']) {
-  byId(id).addEventListener('change', () => {
-    announce('');
-    render();
-  });
-}
+byId('time').addEventListener('change', render);
+byId('already').addEventListener('change', render);
+byId('pressure').addEventListener('change', render);
+byId('missing').addEventListener('change', () => {
+  if (currentCase().order === 'DB-102' && state.sentAt === null) {
+    state.transferredAt = byId('missing').checked ? 2 : null;
+  }
+  updateScenario();
+});
 
-byId('send').addEventListener('click', () => {
-  submitted = true;
-  byId('correction').hidden = true;
-  announce('');
+byId('prepare').addEventListener('click', () => {
+  const data = currentCase();
+  write('confirm-order', data.order + ' · ' + data.product + ' · ' + data.price);
+  write('confirm-reason', byId('missing').checked ? 'Hàng không đúng mô tả · Người mua đề nghị đối chiếu bản lúc đặt.' : 'Hàng không đúng mô tả · ' + data.reason);
+  write('confirm-label', data.label);
+  byId('confirm-label').setAttribute('aria-label', 'Tem minh hoạ ghi ' + data.label);
+  byId('confirm').showModal();
+});
+
+byId('submit-request').addEventListener('click', () => {
+  if (!byId('confirm').open || byId('prepare').hidden) return;
+  const at = time() || 2;
+  state.sentAt = at;
+  if (currentCase().order === 'DB-102') {
+    transfer(at);
+    notifyShop(at, 'Người mua đề nghị xem xét dung tích của nồi chiên DB-102. Bạn có 24 giờ để phản hồi. Không cần gửi lại ảnh tem đã gửi.');
+  }
+  byId('confirm').close();
   render();
-  byId('review-title').focus();
+  byId('add-evidence').focus();
 });
 
-document.querySelectorAll('[data-edit]').forEach(button => {
-  button.addEventListener('click', () => {
-    editButton = button;
-    byId('correction').hidden = false;
-    byId('correction-text').value = correction;
-    byId('correction-text').focus();
-  });
+byId('add-evidence').addEventListener('click', () => {
+  byId('attachment-form').reset();
+  byId('attachment').showModal();
 });
 
-byId('cancel').addEventListener('click', () => {
-  byId('correction').hidden = true;
-  editButton.focus();
-});
-
-byId('correction').addEventListener('submit', event => {
+byId('attachment-form').addEventListener('submit', event => {
+  if (event.submitter?.id !== 'save-evidence') return;
   event.preventDefault();
-  correction = byId('correction-text').value.trim();
-  byId('correction').hidden = true;
+  const note = byId('correction-text').value.trim();
+  const photo = byId('photo').files[0];
+  if (!note && !photo) {
+    byId('correction-text').setCustomValidity('Hãy chọn ảnh hoặc mô tả bằng chứng.');
+    byId('correction-text').reportValidity();
+    byId('correction-text').setCustomValidity('');
+    return;
+  }
+  state.evidence.push({ photo: photo ? URL.createObjectURL(photo) : null, note });
+  if (currentCase().order === 'DB-102') {
+    notifyShop(time() || 2, 'Hồ sơ DB-102 có bằng chứng bổ sung về hàng nhận. Bạn có 24 giờ để phản hồi. Không cần gửi lại ảnh tem đã gửi.');
+  }
+  byId('attachment').close();
   render();
-  announce(correction ? 'Đã lưu thông tin bổ sung.' : 'Đã xoá nội dung bổ sung.');
-  editButton.focus();
+});
+
+byId('end-chat').addEventListener('click', () => {
+  state.ended = true;
+  render();
+  byId('reopen').focus();
+});
+byId('reopen').addEventListener('click', () => {
+  state.ended = false;
+  render();
+  byId('add-evidence').focus();
+});
+
+byId('change-order').addEventListener('click', () => {
+  const other = byId('case').value === 'S01' ? 'S02' : 'S01';
+  byId('select-other').value = other;
+  write('select-other', 'Chọn ' + cases[other].order + ' · ' + cases[other].product);
+  byId('order-picker').showModal();
+});
+byId('select-other').addEventListener('click', () => {
+  byId('case').value = byId('select-other').value;
+  byId('order-picker').close();
+  resetCase();
+  byId('case').focus();
 });
 
 const blockedRequests = {
-  refund: 'Yêu cầu hoàn tiền cần được nhân viên có thẩm quyền xem xét cùng bằng chứng của hai bên.',
-  close: 'Hồ sơ vẫn mở. Chỉ nhân viên có thẩm quyền mới có thể quyết định đóng khiếu nại.',
-  penalty: 'Xử phạt thuộc bộ phận chuyên trách. Bạn có thể chuyển hồ sơ để trưởng nhóm điều phối.'
+  refund: 'Nhân viên có thẩm quyền cần xem xét bằng chứng trước khi quyết định hoàn tiền.',
+  close: 'Chưa có quyết định đóng khiếu nại. Việc này thuộc nhân viên có thẩm quyền.',
+  penalty: 'Việc xử phạt shop thuộc bộ phận chuyên trách.'
 };
 document.querySelectorAll('[data-request]').forEach(button => {
   button.addEventListener('click', () => announce(blockedRequests[button.dataset.request]));

@@ -363,23 +363,23 @@ Trạng thái **Đã hoàn tiền** chỉ xuất hiện sau khi hệ thống xá
 
 ### §5.1. Cách chạy
 
-Mở [prototype/index.html](prototype/index.html) bằng trình duyệt. Prototype dùng HTML, CSS và JavaScript trong một tệp. Dữ liệu F01/F02, nội dung đọc từ ảnh tem, phản hồi AI và thao tác chuyển hồ sơ đều được mô phỏng. Luồng chạy đến khi hồ sơ chờ nhân viên xem xét.
+Mở [prototype/index.html](prototype/index.html) bằng trình duyệt. Hai màn hình là hồ sơ và hộp xác nhận yêu cầu. Prototype dùng HTML, CSS và JavaScript trong một tệp, với dữ liệu, thời gian và thông báo mô phỏng.
 
-- **S01 là ca demo chính.** Đối chiếu bản lúc đặt 1,5 L với trang hiện tại và tem 1,0 L. Bấm **Chuyển nhân viên xem xét**, sau đó mở **Hồ sơ người duyệt nhận**.
-- **S02 là ca kiểm thử thứ hai.** Đối chiếu dung tích danh định 6 L và dung tích sử dụng 5 L. Trong **Thử tình huống biên**, tắt lời dọa để kiểm tra phản hồi AI giữ nguyên căn cứ.
-- Dùng **Sửa hoặc bổ sung** để nhập thông tin trước hoặc sau khi chuyển. Mục tình huống biên cho phép thử lỗi tải nguồn, thời hạn còn 10 phút và yêu cầu hoàn tiền, đóng hoặc phạt ngay.
+- **S01:** AI tự chuyển trưởng nhóm khi hai bên chưa thống nhất. Bấm **Kiểm tra & gửi yêu cầu trả hàng (đã điền sẵn)**, xem đơn, lý do và tem minh hoạ, rồi bấm **Gửi yêu cầu** để hiện giờ ghi nhận. Hạn gửi của người mua và hạn phản hồi của shop hiển thị riêng.
+- **S02:** Đối chiếu dung tích danh định 6 L và sử dụng 5 L. Người mua có thể bổ sung bằng chứng, dừng rồi mở lại hội thoại, hoặc tự gửi yêu cầu để AI chuyển trưởng nhóm. Tắt lời doạ trong mục kiểm thử để đối chiếu đường xử lý.
+- **Điều khiển kiểm thử:** thử lỗi tải bản lúc đặt, S01 đã gửi trước đó, mốc nhắc còn 3 giờ, còn 10 phút và quá hạn. Mở bản xem thử theo bên nhận để đối chiếu thông báo shop và gói hồ sơ trưởng nhóm. Tệp ảnh bổ sung chỉ được dùng trong phiên trình duyệt. Shop nhận thông báo mẫu đã lược thông tin riêng tư, với ảnh tem gốc biểu diễn bằng tem minh hoạ.
 
 ### §5.2. Ảnh và đối chiếu thiết kế
 
 | Ảnh | Vị trí | Thiết kế và mức tự chủ |
 |---|---|---|
-| [Ảnh 01 — Đối chiếu](prototype/01-doi-chieu.png) | **1** · Căn cứ đối chiếu | HAX G11 — Hiện bản lúc đặt, trang hiện tại, tem và phản hồi shop để giải thích vì sao AI phát hiện chênh lệch. AI tự đối chiếu. |
-| Ảnh 01 | **2** · Bước tiếp theo | HAX G9 — Người mua có thể sửa hoặc bổ sung. AI tự tập hợp và chuyển hồ sơ khi người mua yêu cầu, với quyết định hoàn tiền hoặc đóng hồ sơ dành cho nhân viên có thẩm quyền. |
-| [Ảnh 02 — Chờ xem xét](prototype/02-cho-xem-xet.png) | **3** · Theo dõi hồ sơ | HAX G11 — Hiện lý do chuyển, bên tiếp nhận, thời hạn và hồ sơ người duyệt nhận. Quyết định hoàn tiền hoặc đóng khiếu nại cần người duyệt. |
+| [Ảnh 01 — Đối chiếu](prototype/01-doi-chieu.png) | **1** · Căn cứ đối chiếu | HAX G11 và G2. AI tự đối chiếu ba nguồn, gắn thời điểm và nhãn **Căn cứ xét**, đồng thời chỉ ra giới hạn của mình. |
+| Ảnh 01 | **2** · Bước tiếp theo | HAX G10. AI tự chuyển S01, hiển thị **Chưa có quyết định**, và dành quyết định hoàn tiền hoặc đóng hồ sơ cho nhân viên có thẩm quyền. |
+| [Ảnh 02 — Xác nhận](prototype/02-cho-xem-xet.png) | **3** · Kiểm tra yêu cầu | HAX G9. Người mua kiểm tra đơn, lý do và tem trước khi tự bấm gửi. Hạn gửi vẫn hiện trên màn hình xác nhận. |
 
-Dùng nguồn và phiên bản đặt cạnh nhau để người mua kiểm tra được nhận định, vì điểm quyết định của S01 là thời điểm của nguồn và điểm quyết định của S02 là cách hiểu loại dung tích. Một điểm tin cậy dạng phần trăm sẽ không cho biết nguồn nào đang thiếu hoặc vì sao AI dừng. Hai mức tự chủ xuất hiện cạnh hành động liên quan để người mua biết ai xử lý và hồ sơ đang ở bước nào.
+Ba nguồn đặt cạnh nhau giúp người mua kiểm tra phiên bản quyết định ở S01. Nhãn **danh định** và **sử dụng** giúp người mua kiểm tra cách diễn giải ở S02. Trạng thái chuyển nhân viên và biên nhận yêu cầu có nhãn riêng vì chúng có thể xảy ra theo thứ tự khác nhau giữa hai ca. Mốc ⑤ trên thang trạng thái là bước chỉ xuất hiện khi quyết định đã được thực hiện. Demo dừng ở bước nhân viên xem xét.
 
-Lời thoại AI là bản tạm cho §3. Nút chuyển hồ sơ, trạng thái chờ và thông báo thời hạn trong prototype là hành vi mô phỏng cần nhóm xác nhận trước khi chốt demo.
+Hai mốc giờ đặt và sửa ở S01 lấy từ đề xuất của §3.0 và cần Hoàng xác nhận. Bản demo hiển thị biên nhận theo §3, trong khi quy tắc xét tiếp hồ sơ qua hạn gửi vẫn đang chờ nhóm chốt.
 
 
 ## §6. Tốt là gì — R6
