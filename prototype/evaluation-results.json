@@ -1,0 +1,75 @@
+{
+  "browser": "Google Chrome",
+  "mode": "file://, Chromium DevTools Protocol, prototype mo phong",
+  "source": "prototype/index.html",
+  "sourceSha256": "21fd02daf65ae5e859f5c5f3e1901bc4dcea654e35b9af758622d7bf9f5adf68",
+  "passed": 13,
+  "total": 13,
+  "results": [
+    {
+      "scenario": "S01",
+      "check": "Căn cứ và tự chuyển",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S01",
+      "check": "F04 không dùng nguồn thay thế",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S01",
+      "check": "Nhắc hạn và hạn chót",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S01",
+      "check": "Nộp 14:59, tiếp tục xét và bổ sung sau hạn",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S01",
+      "check": "Đổi đơn giữ hồ sơ, biên nhận và bằng chứng",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S01",
+      "check": "Duyệt, giao dịch lỗi, thử lại và thành công",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S01",
+      "check": "Biến thể đã nộp trước và duyệt sau hạn phản hồi",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S02",
+      "check": "Hai loại dung tích và lời doạ",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S02",
+      "check": "Dừng, mở lại, gửi và chuyển trung lập",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S02",
+      "check": "Hạn chót và nộp đúng hạn tiếp tục xét",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S02",
+      "check": "Shop xem mẫu đã che, ảnh và ghi chú riêng chỉ hiện với trưởng nhóm",
+      "result": "Pass"
+    },
+    {
+      "scenario": "S02",
+      "check": "Chặn yêu cầu vượt quyền và tách duyệt từ chối khỏi đóng",
+      "result": "Pass"
+    },
+    {
+      "scenario": "UI",
+      "check": "Màn hình và hộp xác nhận tại 375 px",
+      "result": "Pass"
+    }
+  ]
+}

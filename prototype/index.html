@@ -119,7 +119,7 @@ dialog input{max-width:100%}
   </div>
   <nav class="steps" aria-label="Trạng thái hồ sơ">
     <span>① Trao đổi với AI</span><span>② Ghi nhận yêu cầu</span><span>③ Chờ phản hồi</span>
-    <span>④ Chuyển nhân viên</span><span>⑤ Quyết định đã thực hiện</span>
+    <span>④ Chuyển nhân viên</span><span>⑤ Có quyết định</span><span>⑥ Đã thực hiện</span>
   </nav>
   <div class="grid">
     <section class="panel" aria-labelledby="evidence-title">
@@ -138,7 +138,7 @@ dialog input{max-width:100%}
       <h2 id="check-title"><span class="num">2</span> Bước tiếp theo</h2>
       <p id="status" class="result" role="status"></p>
       <p id="receipt" class="notice" hidden></p>
-      <p id="reminder" class="notice" hidden>Nhắc lúc 12:00, 13/11 · Bạn còn 3 giờ để gửi yêu cầu.</p>
+      <p id="reminder" class="notice" hidden></p>
       <div class="action-block">
         <span class="chip">AI tự làm</span><p id="next"></p>
       </div>
@@ -149,7 +149,7 @@ dialog input{max-width:100%}
           <button id="add-evidence" type="button"></button>
           <button id="end-chat" type="button">Đã hiểu, không gửi yêu cầu</button>
         </div>
-        <p id="reopen-hint" class="muted" hidden>Bạn có thể mở lại và gửi yêu cầu đến 15:00 ngày 13/11.</p>
+        <p id="reopen-hint" class="muted" hidden>Bạn có thể mở lại và gửi yêu cầu trước 15:00 ngày 13/11.</p>
         <button id="reopen" type="button" hidden>Mở lại hội thoại</button>
       </div>
       <p id="evidence-added" class="muted" hidden></p>
@@ -167,9 +167,11 @@ dialog input{max-width:100%}
       <label id="already-control"><input id="already" type="checkbox"> S01 đã gửi yêu cầu trước đó</label>
       <label for="time">Thời điểm mô phỏng</label>
       <select id="time">
-        <option value="0">12/11 · 14:00</option>
+        <option value="2">12/11 · 14:02 (bắt đầu demo)</option>
         <option value="1320">13/11 · 12:00 (mốc nhắc)</option>
         <option value="1490">13/11 · 14:50 (còn 10 phút)</option>
+        <option value="1499">13/11 · 14:59 (trước hạn)</option>
+        <option value="1500">13/11 · 15:00 (dừng nhận yêu cầu)</option>
         <option value="1501">13/11 · 15:01 (quá hạn)</option>
       </select>
     </div>
@@ -179,11 +181,24 @@ dialog input{max-width:100%}
       <button type="button" data-request="penalty">Mô phỏng tin nhắn “Phạt shop”</button>
     </div>
     <p id="feedback" role="status"></p>
+    <details>
+      <summary>Mô phỏng phản hồi, duyệt và thực thi</summary>
+      <div class="actions">
+        <button id="shop-reply" type="button">Ghi nhận shop phản hồi</button>
+        <button id="approve" type="button">Nhân viên duyệt hoàn</button>
+        <button id="decline" type="button">Nhân viên duyệt từ chối</button>
+        <button id="fail" type="button">Giao dịch báo lỗi</button>
+        <button id="retry" type="button">Thử lại giao dịch</button>
+        <button id="complete" type="button">Xác nhận hoàn thành công</button>
+        <button id="close-case" type="button">Xác nhận đã đóng</button>
+      </div>
+      <p class="muted">Cần có biên nhận và hồ sơ đã chuyển. Nhân viên có thể duyệt khi shop đã phản hồi hoặc hết hạn phản hồi. Các nút là sự kiện kiểm thử.</p>
+    </details>
     <details id="audiences">
       <summary>Xem thông báo mô phỏng theo bên nhận</summary>
       <div class="preview-grid">
         <div><h3>Trưởng nhóm</h3><ul class="packet" id="packet"></ul><div id="review-photos" class="review-photos"></div></div>
-        <div><h3>Shop</h3><ul class="packet" id="shop-packet"></ul></div>
+        <div><h3>Shop</h3><ul class="packet" id="shop-packet"></ul><div id="shop-evidence" class="review-photos"></div></div>
       </div>
     </details>
   </details>
@@ -208,7 +223,8 @@ dialog input{max-width:100%}
     <input id="photo" type="file" accept="image/*">
     <label for="correction-text">Mô tả bằng chứng</label>
     <textarea id="correction-text" rows="3" maxlength="500" placeholder="Ghi điểm khác biệt cần xem xét."></textarea>
-    <p class="muted">Bản demo chỉ chia sẻ thông báo về bằng chứng với shop. Ảnh gốc và nội dung nhập được giữ trong bản xem thử hồ sơ.</p>
+    <label id="sample-label"><input id="share-sample" type="checkbox"> Dùng ảnh mẫu đã che thông tin liên hệ để shop phản hồi</label>
+    <p class="muted">Ảnh tải lên và mô tả tự nhập dành cho trưởng nhóm. Shop chỉ thấy ảnh mẫu đã che và mô tả đi kèm.</p>
     <div class="actions dialog-actions"><button type="submit" formmethod="dialog" formnovalidate>Huỷ</button><button id="save-evidence" class="primary" type="submit">Lưu bằng chứng</button></div>
   </form>
 </dialog>
@@ -253,6 +269,8 @@ const baseTime = Date.parse('2026-11-12T14:00:00+07:00');
 const dateFormat = new Intl.DateTimeFormat('vi-VN', {
   timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit'
 });
+const initialTime = 2;
+const orders = new Map();
 let state;
 
 function formatTime(minutes) {
@@ -262,7 +280,7 @@ function formatTime(minutes) {
 }
 
 function notifyShop(at, message) {
-  state.shop = { at, message };
+  state.shop = { at, message, repliedAt: null };
 }
 
 function transfer(at) {
@@ -270,27 +288,39 @@ function transfer(at) {
   state.transferredAt = at;
 }
 
-function resetCase() {
-  for (const evidence of state?.evidence ?? []) {
-    if (evidence.photo) URL.revokeObjectURL(evidence.photo);
+function openCase() {
+  const order = currentCase().order;
+  if (!orders.has(order)) {
+    orders.set(order, {
+      sentAt: null, transferredAt: null, shop: null, ended: false,
+      missing: false, pressure: true, evidence: [], decision: null
+    });
   }
-  state = { sentAt: null, transferredAt: null, shop: null, ended: false, evidence: [] };
-  byId('missing').checked = false;
-  byId('pressure').checked = true;
-  byId('already').checked = false;
-  byId('time').value = '0';
+  state = orders.get(order);
+  byId('missing').checked = state.missing;
+  byId('pressure').checked = state.pressure;
+  byId('already').checked = state.sentAt === 0;
   byId('audiences').open = false;
   announce('');
   updateScenario();
 }
 
+function resetDemo() {
+  for (const order of orders.values()) {
+    for (const evidence of order.evidence) {
+      if (evidence.photo) URL.revokeObjectURL(evidence.photo);
+    }
+  }
+  orders.clear();
+  byId('time').value = String(initialTime);
+  openCase();
+}
+
 function updateScenario() {
   const s01 = byId('case').value === 'S01';
-  if (s01 || byId('missing').checked) transfer(2);
-  if (s01 && !byId('missing').checked) {
-    notifyShop(2, 'Hồ sơ DB-101 đã chuyển nhân viên Shopee vì hai bên chưa thống nhất. Căn cứ xét là mô tả lúc người mua đặt (01/11 09:15): “Cối chính 1,5 lít”. Mô tả đã sửa lúc 04/11 20:40 không dùng làm căn cứ cho đơn này. Bạn có thể bổ sung giải thích hoặc chứng cứ đến 14:02 13/11. Chưa có quyết định.');
-  } else if (s01) {
-    state.shop = null;
+  if (s01 || state.missing) transfer(time());
+  if (s01 && !state.missing && !state.shop) {
+    notifyShop(time(), 'Hồ sơ DB-101 đã chuyển nhân viên Shopee vì hai bên chưa thống nhất. Căn cứ xét là bản lúc đặt (01/11 09:15): “Cối chính 1,5 lít”. Shop có thể bổ sung giải thích hoặc chứng cứ trong 24 giờ.');
   }
   render();
 }
@@ -335,26 +365,46 @@ function showPacket(id, entries) {
   }));
 }
 
+const decisions = {
+  refundPending: '⑤ Đã duyệt hoàn tiền · Đang xử lý giao dịch',
+  refundFailed: '⑤ Đã duyệt hoàn tiền · Giao dịch lỗi, chờ xử lý lại',
+  refunded: '⑥ Đã hoàn tiền',
+  closePending: '⑤ Đã duyệt từ chối · Đang xử lý đóng hồ sơ',
+  closed: '⑥ Đã từ chối và đóng khiếu nại'
+};
+
+function canReview() {
+  return state.sentAt !== null && state.transferredAt !== null && !state.missing
+    && state.shop !== null && (state.shop.repliedAt !== null || time() >= state.shop.at + 1440)
+    && state.decision === null;
+}
+
 function render() {
   const data = currentCase();
   const s01 = data.order === 'DB-101';
-  const missing = byId('missing').checked;
-  const pressure = !s01 && byId('pressure').checked;
+  const missing = state.missing;
+  const pressure = !s01 && state.pressure;
   const now = time();
-  const sentAt = s01 && byId('already').checked ? 0 : state.sentAt;
+  const sentAt = state.sentAt;
   const sent = sentAt !== null;
   const transferred = state.transferredAt !== null;
   const expired = now >= deadline;
-  const remaining = expired ? 'Đã hết hạn' : now === 0 ? 'Còn 25 giờ' : now === 1320 ? 'Còn 3 giờ' : 'Còn 10 phút';
+  const minutes = deadline - now;
+  const remaining = expired ? 'Đã hết hạn' : now === initialTime ? 'Còn 25 giờ'
+    : minutes >= 60 ? 'Còn ' + Math.floor(minutes / 60) + ' giờ' : 'Còn ' + minutes + ' phút';
   const replyDue = state.shop === null ? null : state.shop.at + 1440;
-  const waiting = replyDue !== null && now < replyDue;
+  const replied = state.shop?.repliedAt != null;
+  const waiting = replyDue !== null && !replied && now < replyDue;
+  const executed = state.decision === 'refunded' || state.decision === 'closed';
+  const decisionText = executed ? decisions[state.decision] + ' lúc ' + formatTime(state.decisionAt) : decisions[state.decision];
   const buyer = s01 ? data.buyer : data.buyer + (pressure ? ', không tôi bóc phốt sàn.' : '.');
 
   write('order', 'Đơn ' + data.order);
   write('product', data.product + ' · ' + data.price);
-  write('remaining', remaining);
+  write('remaining', sent ? 'Đã nộp đúng hạn' : remaining);
+  for (const option of byId('time').options) option.disabled = Number(option.value) < now;
   write('reply-deadline', replyDue === null ? 'Chưa mở hạn' : formatTime(replyDue));
-  write('reply-status', replyDue === null ? 'Chưa có thông báo cần phản hồi' : waiting ? 'Đang chờ shop bổ sung/phản hồi' : 'Đã hết hạn phản hồi');
+  write('reply-status', replyDue === null ? 'Chưa có thông báo cần phản hồi' : replied ? 'Shop đã phản hồi lúc ' + formatTime(state.shop.repliedAt) : waiting ? 'Đang chờ shop bổ sung/phản hồi' : 'Đã hết hạn phản hồi');
   write('evidence-heading', s01 ? 'Đối chiếu mô tả' : 'Trích mô tả lúc đặt');
   write('signal', missing ? 'Thiếu bản lúc đặt' : s01 ? 'Có chênh lệch' : 'Chưa đủ căn cứ');
   write('snapshot', missing ? 'Chưa truy cập được' : data.snapshot);
@@ -368,34 +418,45 @@ function render() {
   write('label-meta', data.labelMeta);
   write('seller', data.seller);
   write('buyer', '“' + buyer + '”');
-  write('assistant', assistantReply({ s01, missing, pressure, remaining, sent, expired }));
+  write('assistant', state.decision ? decisionText : assistantReply({ s01, missing, pressure, remaining, sent, expired }));
   byId('limitation').hidden = !s01 || missing;
 
-  const stages = [!transferred && !state.ended, sent, waiting, transferred, false];
+  const stages = [!transferred && !state.ended, sent, waiting, transferred, state.decision !== null, executed];
   document.querySelectorAll('.steps span').forEach((step, index) => {
     step.toggleAttribute('data-active', stages[index]);
   });
-  write('status', transferred ? '④ Đã chuyển trưởng nhóm · Chưa có quyết định'
+  write('status', state.decision ? decisionText : transferred ? '④ Đã chuyển trưởng nhóm · Chưa có quyết định'
     : state.ended ? 'Đã kết thúc hội thoại · Chưa gửi yêu cầu'
     : waiting ? '③ Đang chờ shop phản hồi · Chưa có quyết định'
     : '① Chưa đủ căn cứ · Chưa có quyết định');
   byId('receipt').hidden = !sent;
-  write('receipt', sent ? '② Đã gửi yêu cầu, ghi nhận lúc ' + formatTime(sentAt) + '.' : '');
-  byId('reminder').hidden = sent || now < 1320;
-  write('next', transferred
+  write('receipt', sent ? '② Đã gửi yêu cầu, ghi nhận lúc ' + formatTime(sentAt) + '.'
+    + (expired && !state.decision ? ' Hồ sơ nộp đúng hạn tiếp tục được xét.' : '') : '');
+  byId('reminder').hidden = sent || now < 1320 || expired;
+  write('reminder', 'Đã nhắc lúc 12:00, 13/11 · ' + remaining + ' để gửi yêu cầu.');
+  write('next', state.decision ? 'Theo dõi trạng thái thực hiện ở trên.' : expired && !sent ? 'Đã hết thời hạn nộp yêu cầu cho đơn này.' : transferred
     ? (missing ? 'Trưởng nhóm xác minh bản lưu lúc đặt.' : 'Trưởng nhóm nhận hồ sơ để điều phối nhân viên xử lý.')
     : 'Bạn có thể bổ sung bằng chứng hoặc gửi yêu cầu để nhân viên xem xét.');
   byId('prepare').hidden = sent || expired;
   write('prepare', s01 ? 'Kiểm tra & gửi yêu cầu trả hàng (đã điền sẵn)' : 'Vẫn gửi yêu cầu để nhân viên xét');
   write('add-evidence', s01 ? 'Bổ sung bằng chứng' : 'Gửi thêm bằng chứng');
   byId('end-chat').hidden = s01 || transferred || sent;
-  byId('buyer-actions').hidden = state.ended;
+  byId('buyer-actions').hidden = state.ended || state.decision !== null || (expired && !sent);
   byId('reopen-hint').hidden = !state.ended || expired;
   byId('reopen').hidden = !state.ended;
   byId('evidence-added').hidden = state.evidence.length === 0;
   write('evidence-added', 'Bằng chứng bổ sung trong hồ sơ: ' + state.evidence.length + ' mục.');
   byId('pressure-control').hidden = s01;
   byId('already-control').hidden = !s01;
+  byId('already').disabled = sent;
+  byId('missing').disabled = state.decision !== null;
+  byId('shop-reply').disabled = !waiting;
+  byId('approve').disabled = !canReview();
+  byId('decline').disabled = !canReview();
+  byId('fail').disabled = state.decision !== 'refundPending';
+  byId('retry').disabled = state.decision !== 'refundFailed';
+  byId('complete').disabled = state.decision !== 'refundPending';
+  byId('close-case').disabled = state.decision !== 'closePending';
 
   const reviewEntries = [
     'Đã chuyển lúc ' + formatTime(state.transferredAt) + ' · Đơn ' + data.order + ' · ' + data.price,
@@ -410,8 +471,9 @@ function render() {
   if (missing) reviewEntries.push('Cờ · Thiếu bản mô tả lúc đặt.');
   if (s01 && !missing) reviewEntries.push('Cờ · Mô tả sửa sau đặt hàng · Hai bên chưa thống nhất.');
   if (pressure) reviewEntries.push('Cờ · Có lời doạ, không phải căn cứ.');
+  if (state.decision) reviewEntries.push(decisionText);
   for (const evidence of state.evidence) {
-    reviewEntries.push('Bằng chứng bổ sung · ' + (evidence.photo ? 'Có ảnh đính kèm. ' : '') + evidence.note);
+    reviewEntries.push('Bằng chứng bổ sung · ' + (evidence.photo ? 'Có ảnh đính kèm. ' : '') + evidence.note + (evidence.sample ? ' Mẫu ảnh đã chia sẻ với shop.' : ''));
   }
   showPacket('packet', transferred ? reviewEntries : ['Chưa chuyển hồ sơ.']);
   const photos = transferred ? state.evidence.filter(evidence => evidence.photo) : [];
@@ -424,8 +486,18 @@ function render() {
   showPacket('shop-packet', state.shop === null ? ['Chưa có thông báo mới.'] : [
     'Đã thông báo lúc ' + formatTime(state.shop.at),
     state.shop.message,
-    'Hạn bổ sung/phản hồi · ' + formatTime(replyDue)
+    'Hạn bổ sung/phản hồi · ' + formatTime(replyDue),
+    ...(replied ? ['Đã phản hồi lúc ' + formatTime(state.shop.repliedAt)] : [])
   ]);
+  byId('shop-evidence').replaceChildren();
+  if (state.evidence.some(item => item.sample)) {
+    const sample = document.createElement('div');
+    sample.className = 'mock-label';
+    sample.setAttribute('role', 'img');
+    sample.setAttribute('aria-label', 'Ảnh mẫu tem nồi chiên, mã trên tem bị mờ, thông tin liên hệ đã che');
+    sample.textContent = 'Tem nồi chiên · Mã trên tem bị mờ · Liên hệ ██████';
+    byId('shop-evidence').append(sample);
+  }
 }
 
 function announce(message) {
@@ -433,17 +505,39 @@ function announce(message) {
   write('feedback', message);
 }
 
-byId('case').addEventListener('change', resetCase);
-byId('reset').addEventListener('click', resetCase);
+byId('case').addEventListener('change', openCase);
+byId('reset').addEventListener('click', resetDemo);
 byId('time').addEventListener('change', render);
-byId('already').addEventListener('change', render);
-byId('pressure').addEventListener('change', render);
+byId('already').addEventListener('change', () => {
+  if (currentCase().order === 'DB-101' && state.sentAt === null && byId('already').checked) state.sentAt = 0;
+  render();
+});
+byId('pressure').addEventListener('change', () => {
+  state.pressure = byId('pressure').checked;
+  render();
+});
 byId('missing').addEventListener('change', () => {
-  if (currentCase().order === 'DB-102' && state.sentAt === null) {
-    state.transferredAt = byId('missing').checked ? 2 : null;
-  }
+  state.missing = byId('missing').checked;
   updateScenario();
 });
+byId('shop-reply').addEventListener('click', () => {
+  if (byId('shop-reply').disabled) return;
+  state.shop.repliedAt = time();
+  render();
+});
+
+const decisionTransitions = {
+  approve: 'refundPending', decline: 'closePending', fail: 'refundFailed',
+  retry: 'refundPending', complete: 'refunded', 'close-case': 'closed'
+};
+for (const [id, decision] of Object.entries(decisionTransitions)) {
+  byId(id).addEventListener('click', () => {
+    if (byId(id).disabled) return;
+    state.decision = decision;
+    state.decisionAt = time();
+    render();
+  });
+}
 
 byId('prepare').addEventListener('click', () => {
   const data = currentCase();
@@ -455,8 +549,8 @@ byId('prepare').addEventListener('click', () => {
 });
 
 byId('submit-request').addEventListener('click', () => {
-  if (!byId('confirm').open || byId('prepare').hidden) return;
-  const at = time() || 2;
+  if (!byId('confirm').open || state.sentAt !== null || time() >= deadline) return;
+  const at = time();
   state.sentAt = at;
   if (currentCase().order === 'DB-102') {
     transfer(at);
@@ -469,6 +563,7 @@ byId('submit-request').addEventListener('click', () => {
 
 byId('add-evidence').addEventListener('click', () => {
   byId('attachment-form').reset();
+  byId('sample-label').hidden = currentCase().order !== 'DB-102' || state.evidence.some(item => item.sample);
   byId('attachment').showModal();
 });
 
@@ -477,15 +572,16 @@ byId('attachment-form').addEventListener('submit', event => {
   event.preventDefault();
   const note = byId('correction-text').value.trim();
   const photo = byId('photo').files[0];
-  if (!note && !photo) {
-    byId('correction-text').setCustomValidity('Hãy chọn ảnh hoặc mô tả bằng chứng.');
+  const sample = !byId('sample-label').hidden && byId('share-sample').checked;
+  if (!note && !photo && !sample) {
+    byId('correction-text').setCustomValidity('Hãy chọn ảnh, mô tả bằng chứng hoặc dùng ảnh mẫu.');
     byId('correction-text').reportValidity();
     byId('correction-text').setCustomValidity('');
     return;
   }
-  state.evidence.push({ photo: photo ? URL.createObjectURL(photo) : null, note });
-  if (currentCase().order === 'DB-102') {
-    notifyShop(time() || 2, 'Hồ sơ DB-102 có bằng chứng bổ sung về hàng nhận. Bạn có 24 giờ để phản hồi. Không cần gửi lại ảnh tem đã gửi.');
+  state.evidence.push({ photo: photo ? URL.createObjectURL(photo) : null, note, sample });
+  if (sample) {
+    notifyShop(time(), 'Hồ sơ DB-102 có ảnh mới cho thấy mã trên tem bị mờ. Shop có 24 giờ để phản hồi ảnh này. Không cần gửi lại ảnh tem đã gửi.');
   }
   byId('attachment').close();
   render();
@@ -511,7 +607,7 @@ byId('change-order').addEventListener('click', () => {
 byId('select-other').addEventListener('click', () => {
   byId('case').value = byId('select-other').value;
   byId('order-picker').close();
-  resetCase();
+  openCase();
   byId('case').focus();
 });
 
@@ -523,7 +619,7 @@ const blockedRequests = {
 document.querySelectorAll('[data-request]').forEach(button => {
   button.addEventListener('click', () => announce(blockedRequests[button.dataset.request]));
 });
-resetCase();
+resetDemo();
 </script>
 </body>
 </html>

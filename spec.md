@@ -46,7 +46,7 @@ AI hỗ trợ đọc và đối chiếu hồ sơ, không được biến một n
 
 **Thời điểm đánh giá:** 12/11/2026, 14:00, giờ Việt Nam (UTC+7).
 
-**Chính sách giả lập cho lab:** hạn gửi yêu cầu là thời điểm nhận hàng cộng 7 ngày; hạn bổ sung/phản hồi là 24 giờ từ lúc thông báo được ghi nhận đã gửi. Hai loại hạn được hiển thị riêng. Quá hạn phản hồi không tự động đồng nghĩa một bên đúng hoặc thua. Chuyển nhân viên không tự động gia hạn gửi yêu cầu.
+**Chính sách giả lập cho lab:** hạn gửi yêu cầu là thời điểm nhận hàng cộng 7 ngày; hạn bổ sung/phản hồi là 24 giờ từ lúc thông báo được ghi nhận đã gửi. Hai loại hạn được hiển thị riêng. Quá hạn phản hồi không tự động đồng nghĩa một bên đúng hoặc thua. Chuyển nhân viên không tự động gia hạn gửi yêu cầu. Hệ thống chỉ nhận yêu cầu mới khi thời điểm ghi nhận nhỏ hơn hạn gửi (giờ Việt Nam). Yêu cầu đã ghi nhận đúng hạn tiếp tục được xét đến khi có quyết định, kể cả khi bổ sung hoặc phản hồi diễn ra sau hạn gửi. Các bên vẫn tuân theo hạn bổ sung/phản hồi riêng.
 
 | Mã | Dữ liệu dựng dùng làm căn cứ |
 |---|---|
@@ -93,7 +93,7 @@ S01 và S02 là hai kịch bản được chọn phân tích sâu, đánh dấu 
 
 **Ca suýt được chọn: S06 — đòi khoá shop vì nghi hàng giả.** Xét phạm vi ảnh hưởng, ca này có thể nặng hơn S01–S02; không khẳng định thiệt hại của nó luôn thấp hơn. Nhóm không chọn làm ca prototype chính vì xử phạt/kiểm định ngoài luồng thường: ranh giới dừng và chuyển người tương đối rõ. Với nguồn lực 1–2 màn hình, chọn S01–S02 để thể hiện sâu hai hướng sai tài chính ngay trong lát cắt. S06 được giữ làm ca kiểm tra giới hạn thẩm quyền; luồng khiếu nại thường không cung cấp thao tác phạt shop.
 
-**Một lựa chọn khác đã loại: S08 — sắp hết hạn.** Ca này có thể mất quyền khiếu nại và rất nghiêm trọng; không chọn làm ca chính vì cần chốt thêm cơ chế thời hạn mà track chưa cấp. Giữ lại thành ca kiểm thử biên, đồng thời đưa thời hạn vào tiêu chí §6 để tránh thiết kế chuyển người rồi bỏ mặc khách.
+**Một lựa chọn khác đã loại: S08 — sắp hết hạn.** Ca này có thể mất quyền khiếu nại và rất nghiêm trọng; không chọn làm ca chính vì nhóm ưu tiên hai ca sai nguồn và sai diễn giải ở luồng chính. Quy tắc nộp đúng hạn được mô phỏng theo §2.1. Giữ lại thành ca kiểm thử biên, đồng thời đưa thời hạn vào tiêu chí §6 để tránh thiết kế chuyển người rồi bỏ mặc khách.
 
 ## §3. Khi AI sai — R3
 
@@ -111,9 +111,10 @@ S01 và S02 là hai kịch bản được chọn phân tích sâu, đánh dấu 
 | 2 | Đã gửi yêu cầu, ghi nhận lúc … | “yêu cầu của bạn đã được ghi nhận lúc …” | “đã được gia hạn”, “chắc chắn được hoàn” |
 | 3 | Đang chờ [bên] phản hồi, hạn … | tên bên đang được chờ và hạn | “bên kia im lặng thì bạn thắng” |
 | 4 | Đã chuyển nhân viên, **chưa có quyết định** | “đã chuyển”, bên tiếp nhận là ai | thời điểm có quyết định, thời điểm tiền về |
-| 5 | Đã có quyết định: [hoàn / không hoàn], đã thực hiện lúc … | kết quả và thời điểm thực hiện | |
+| 5 | Đã duyệt hoàn hoặc từ chối · Đang thực hiện / thực hiện lỗi, chờ xử lý lại | kết quả duyệt và tình trạng thực hiện | “đã hoàn tiền”, “đã đóng” hoặc “đã từ chối” khi hệ thống chưa xác nhận thực hiện thành công |
+| 6 | Đã hoàn tiền hoặc đã từ chối và đóng khiếu nại, thực hiện lúc … | kết quả đã thực hiện và thời điểm xác nhận | |
 
-**Luật câu chữ:** AI chỉ được dùng các từ “đã hoàn”, “đã đóng”, “đã từ chối” khi hồ sơ ở trạng thái 5. Ở mọi trạng thái khác, AI dùng từ đúng với trạng thái đó.
+**Luật câu chữ:** AI chỉ được dùng các từ “đã hoàn”, “đã đóng”, “đã từ chối” khi hồ sơ ở trạng thái 6 và hệ thống đã xác nhận hành động tương ứng thành công. Ở mọi trạng thái khác, AI dùng từ đúng với trạng thái đó.
 
 ---
 
@@ -167,9 +168,9 @@ Trạng thái: ④ Đã chuyển trưởng nhóm · CHƯA có quyết định
 | Người mua làm | Kết quả |
 |---|---|
 | Bấm **Kiểm tra & gửi yêu cầu** | Màn hình xác nhận hiện đơn, lý do và ảnh. Người mua bấm gửi, trạng thái chuyển sang ② “Đã gửi yêu cầu, ghi nhận lúc …”. AI không tự gửi thay. |
-| Bấm **Không phải đơn này** | Quay lại chọn đơn. Bằng chứng của DB-101 không bị gắn sang đơn mới (S10). |
+| Bấm **Không phải đơn này** | Quay lại chọn đơn. Hồ sơ, bằng chứng và biên nhận của DB-101 được giữ theo mã đơn (S10). |
 | Bấm **Bổ sung bằng chứng** | Ảnh mới được thêm vào hồ sơ đã chuyển, không tạo hồ sơ mới. |
-| Không làm gì | AI không đóng hồ sơ. Hệ thống nhắc một lần lúc 12:00 13/11 (còn 3 giờ). Quá 15:00 13/11 mà chưa gửi yêu cầu thì quyền gửi hết theo chính sách dựng. Điều này đã hiện từ đầu, không phải bất ngờ. |
+| Không làm gì | AI không đóng hồ sơ. Hệ thống nhắc một lần lúc 12:00 13/11 (còn 3 giờ). Từ 15:00 ngày 13/11, hệ thống dừng nhận yêu cầu mới. Yêu cầu đã ghi nhận trước mốc này tiếp tục được xét theo §2.1. Điều này đã hiện từ đầu, không phải bất ngờ. |
 
 #### Ai được báo, sau bao lâu
 
@@ -249,7 +250,7 @@ Trạng thái: ① Chưa đủ căn cứ · CHƯA có quyết định
 |---|---|
 | **Gửi thêm bằng chứng** | Ảnh thêm vào hồ sơ. Nếu ảnh có thông tin liên hệ thì được che trước khi shop thấy (S07). Shop có 24 giờ để phản hồi bằng chứng mới. |
 | **Vẫn gửi yêu cầu để nhân viên xét** | Màn hình xác nhận yêu cầu, người mua tự bấm gửi (②). Vì hai bên chưa thống nhất nên hồ sơ chuyển trưởng nhóm (④). |
-| **Đã hiểu, không gửi yêu cầu** | Hội thoại kết thúc. Người mua vẫn có thể mở lại và gửi yêu cầu đến 15:00 13/11; dòng này hiện ngay dưới nút. |
+| **Đã hiểu, không gửi yêu cầu** | Hội thoại kết thúc. Người mua vẫn có thể mở lại và gửi yêu cầu trước 15:00 ngày 13/11; dòng này hiện ngay dưới nút. |
 | Không làm gì | AI không đóng, không hoàn. Nhắc một lần lúc 12:00 13/11. |
 
 #### Ai được báo, sau bao lâu
@@ -302,11 +303,11 @@ Trạng thái: ① Chưa đủ căn cứ · CHƯA có quyết định
 
 ### 3.5. Bàn giao cho §4–§6
 
-| Cho | Điểm §3 đã giả định, cần phần sau chốt |
+| Cho | Quy tắc áp dụng |
 |---|---|
-| §4 | S01 giả định `chuyen_truong_nhom` là **tự làm**, vì đảo lại được và chờ duyệt thì tốn hạn của người mua. `soan_hoan_tien` và `tu_choi_khieu_nai` **không có trong khung chat**. `yeu_cau_bang_chung` **không xin lại** bằng chứng đã có (ảnh tem shop ở S02). `phat_shop` không xuất hiện ở cả hai ca. Người duyệt **không nhận đề xuất kết quả** từ AI. |
-| §4 (đề xuất luật, chưa có trong chính sách dựng) | “Yêu cầu được ghi nhận trước hạn gửi thì được xét tới khi có quyết định, kể cả khi bổ sung hay phản hồi diễn ra sau hạn gửi.” Đây không phải gia hạn, mà là giữ quyền cho yêu cầu đã nộp. Khi §4 chưa chốt luật này, AI chỉ nói “đã ghi nhận lúc …”. |
-| §5 | Prototype cần có: thẻ đối chiếu ba nguồn (S01), thẻ trích hai loại dung tích (S02), thang trạng thái ①–⑤, hai đồng hồ hạn riêng, nút **Không phải đơn này**, nút gửi yêu cầu đã điền sẵn, và **không có** nút hoàn, đóng hay phạt. Ba ô ở 3.3 là ba số để đánh trên ảnh. |
+| §4 | Ở S01, `chuyen_truong_nhom` là **tự làm**, vì đảo lại được và chờ duyệt thì tốn hạn của người mua. `soan_hoan_tien` và `tu_choi_khieu_nai` **không có trong khung chat**. `yeu_cau_bang_chung` **không xin lại** bằng chứng đã có (ảnh tem shop ở S02). `phat_shop` không xuất hiện ở cả hai ca. Với S01 và S02, người duyệt nhận hồ sơ trung lập theo §4.4. |
+| §4 | Áp dụng §2.1. Hồ sơ ghi nhận đúng hạn tiếp tục được xét. Hệ thống giữ thời điểm ghi nhận và hiển thị hạn phản hồi riêng. |
+| §5 | Prototype cần có: thẻ đối chiếu ba nguồn (S01), thẻ trích hai loại dung tích (S02), thang trạng thái ①–⑥, hai đồng hồ hạn riêng, nút **Không phải đơn này**, nút gửi yêu cầu đã điền sẵn, và **không có** nút hoàn, đóng hay phạt. Ba ô ở 3.3 là ba số để đánh trên ảnh. |
 | §6 | E01: thẻ đối chiếu (S01) và thẻ trích dung tích (S02). E02: không có nút tiền trong chat, kèm luật câu chữ ở 3.0. E03: hai đồng hồ hạn, nút gửi điền sẵn, nhắc khi còn 3 giờ. Thời điểm đặt hàng và sửa mô tả của F01 dùng thống nhất theo dữ liệu giả lập ở §2.1 và §3.0. |
 
 
@@ -319,8 +320,8 @@ AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo c
 |---|---|---|---|
 | `yeu_cau_bang_chung` | **Tự làm.** Chỉ gửi khi đã xác định đúng đơn, đúng bên cần phản hồi và đúng bằng chứng còn thiếu. Nếu chưa rõ đơn nào hoặc hàng sai ở điểm nào, AI hỏi một câu làm rõ trước. | Tin đã gửi thì người nhận đã thấy. Hỏi nhầm bên hoặc hỏi lại bằng chứng đã có làm mất thời gian và có thể chậm phản hồi. Có thể đính chính bằng tin mới. | Duyệt tay từng tin giúp giảm lỗi nhưng làm chậm cả các ca thông thường. Nhóm đề xuất kiểm tra hồ sơ trước khi gửi và dùng mẫu trung lập nêu đúng mục còn thiếu. |
 | `chuyen_truong_nhom` | **Tự làm.** Chuyển hồ sơ kèm lý do khi thiếu bản mô tả lúc đặt và chưa thể bổ sung, bằng chứng mâu thuẫn ở điểm quyết định, hoặc ca vượt thẩm quyền của AI. | Chuyển nhầm làm tăng hàng đợi và khiến hai bên chờ lâu hơn. Hồ sơ có thể được điều phối lại. | Duyệt trước khi chuyển giúp giảm chuyển nhầm nhưng thêm một lượt chờ. Nhóm đề xuất chuyển theo điều kiện cụ thể và hướng dẫn ngay với ca rõ ràng. |
-| `soan_hoan_tien` | **Cần người duyệt.** Tool này thực hiện hoàn tiền. Nhân viên có thẩm quyền xem đơn, bản mô tả lúc đặt, bằng chứng hai bên, phản hồi của shop hoặc trạng thái hết hạn phản hồi, số tiền và lý do đề xuất. Quá hạn duyệt thì hồ sơ vẫn mở, người dùng thấy trạng thái chờ và trưởng nhóm được báo. | Hoàn sai làm người bán mất tiền và khó thu hồi. Chờ duyệt khiến người mua đủ điều kiện nhận tiền muộn hơn. AI chuẩn bị hồ sơ trước để giảm thời gian xử lý. | Hoàn tự động nhanh hơn nhưng có thể dựa trên bản mô tả sai phiên bản hoặc bằng chứng một phía. Giao toàn bộ việc chuẩn bị cho nhân viên làm tăng thời gian xử lý. Nhóm đề xuất cho AI soạn hồ sơ và yêu cầu phê duyệt trước khi chuyển tiền. |
-| `tu_choi_khieu_nai` | **Cần người duyệt.** Nhân viên có thẩm quyền xem bản mô tả lúc đặt, lý do khiếu nại, bằng chứng hai bên, phần còn thiếu và lý do đề xuất đóng. Quá hạn duyệt thì hồ sơ vẫn mở, hai bên thấy trạng thái chờ và trưởng nhóm được báo. | Đóng sai khiến tiền về người bán và người mua phải yêu cầu xem xét lại. Việc đảo quyết định khó. Chờ duyệt kéo dài thời gian giải quyết cho cả hai bên. | Tự đóng khi hồ sơ thiếu bằng chứng có thể làm người mua chịu thiệt vì dữ liệu chưa đầy đủ. Nhóm đề xuất cho AI chỉ rõ mục còn thiếu và để người có thẩm quyền quyết định sau khi hai bên có cơ hội phản hồi. |
+| `soan_hoan_tien` | **Cần người duyệt.** Tool này thực hiện hoàn tiền. Nhân viên có thẩm quyền xem đơn, bản mô tả lúc đặt, bằng chứng hai bên, phản hồi của shop hoặc trạng thái hết hạn phản hồi, số tiền và lý do xử lý. Điều kiện soạn đề xuất ở §4.4. Quá hạn duyệt thì hồ sơ vẫn mở, người dùng thấy trạng thái chờ và trưởng nhóm được báo. | Hoàn sai làm người bán mất tiền và khó thu hồi. Chờ duyệt khiến người mua đủ điều kiện nhận tiền muộn hơn. AI chuẩn bị hồ sơ trước để giảm thời gian xử lý. | Hoàn tự động nhanh hơn nhưng có thể dựa trên bản mô tả sai phiên bản hoặc bằng chứng một phía. Giao toàn bộ việc chuẩn bị cho nhân viên làm tăng thời gian xử lý. Nhóm đề xuất cho AI soạn hồ sơ và yêu cầu phê duyệt trước khi chuyển tiền. |
+| `tu_choi_khieu_nai` | **Cần người duyệt.** Nhân viên có thẩm quyền xem bản mô tả lúc đặt, lý do khiếu nại, bằng chứng hai bên, phần còn thiếu và lý do đóng. Quá hạn duyệt thì hồ sơ vẫn mở, hai bên thấy trạng thái chờ và trưởng nhóm được báo. | Đóng sai khiến tiền về người bán và người mua phải yêu cầu xem xét lại. Việc đảo quyết định khó. Chờ duyệt kéo dài thời gian giải quyết cho cả hai bên. | Tự đóng khi hồ sơ thiếu bằng chứng có thể làm người mua chịu thiệt vì dữ liệu chưa đầy đủ. Nhóm đề xuất cho AI chỉ rõ mục còn thiếu và để người có thẩm quyền quyết định sau khi hai bên có cơ hội phản hồi. |
 | `phat_shop` | **Cấm đối với AI trong luồng T4.** Khi có dấu hiệu hàng giả hoặc yêu cầu xử phạt, AI chuyển hồ sơ để điều phối đến bộ phận chuyên trách. | Phạt sai có thể làm giảm uy tín hoặc gián đoạn hoạt động của cả shop. Việc khôi phục khó. Chuyển chuyên trách tốn thời gian nhưng cho phép đánh giá bằng chứng và phạm vi ảnh hưởng. | Duyệt phạt ngay trong luồng xử lý một đơn dễ dẫn tới quyết định ảnh hưởng cả shop dựa trên hồ sơ của một giao dịch. Nhóm đề xuất chuyển sang quy trình chuyên trách. |
 
 ### 4.2. Tool khó xếp nhất — `soan_hoan_tien`
@@ -343,23 +344,22 @@ AI được tự hướng dẫn, xin bằng chứng và chuyển hồ sơ theo c
 | Kịch bản §2 | AI làm gì, người dùng thấy gì? | Cái sai có bị chặn? | Khi nào cần hỏi? Có phải chờ vô ích? |
 |---|---|---|---|
 | **S01/F01 · Shop sửa mô tả sau khi bán** | AI hiển thị bản mô tả lúc đặt ghi **1,5 L**, còn trang hiện tại và tem hàng ghi **1,0 L**. AI chỉ rõ chênh lệch và chuyển hồ sơ kèm bằng chứng nếu hai bên vẫn tranh chấp. | **Có.** AI dùng bản lúc đặt để đối chiếu. Hoàn tiền hoặc đóng khiếu nại đều cần người có thẩm quyền duyệt. | Đơn và điểm khác biệt đã rõ nên AI không hỏi lại. Nếu cần thêm phản hồi, AI chỉ yêu cầu đúng bên bổ sung phần còn thiếu. |
-| **S02/F02 · Tem khớp mô tả, người mua dọa bóc phốt** | AI hiển thị nội dung đã đối chiếu và mục bằng chứng còn thiếu. Shop thấy nội dung khiếu nại liên quan và hạn phản hồi. Nếu hai bên vẫn tranh chấp, AI chuyển hồ sơ. | **Có.** Lời đe dọa không kích hoạt hoàn tiền. Tem khớp cũng chưa đủ để AI tự đóng hồ sơ khi còn bằng chứng cần xem. | AI chỉ yêu cầu đúng bên bổ sung đúng mục còn thiếu. Thời gian chờ dành cho phản hồi của hai bên và quyết định của người có thẩm quyền. |
+| **S02/F02 · Tem khớp mô tả, người mua dọa bóc phốt** | AI hiển thị nội dung đã đối chiếu và mục bằng chứng còn thiếu. Shop thấy nội dung khiếu nại liên quan và hạn phản hồi. Nếu người mua vẫn tranh chấp và xác nhận gửi yêu cầu, AI tự chuyển hồ sơ. | **Có.** Lời đe dọa không kích hoạt hoàn tiền. Tem khớp cũng chưa đủ để AI tự đóng hồ sơ khi còn bằng chứng cần xem. | AI chỉ yêu cầu đúng bên bổ sung đúng mục còn thiếu. Thời gian chờ dành cho phản hồi của hai bên và quyết định của người có thẩm quyền. |
 | **F03 · Giao sai size, shop đã xác nhận** | Khi đã xác định đúng đơn, AI dùng xác nhận có sẵn trong hồ sơ, hướng dẫn người mua gửi yêu cầu ngay và chuẩn bị đề xuất hoàn. | **Có.** Hồ sơ có thể được soạn ngay. Tiền chỉ được chuyển sau khi người có thẩm quyền duyệt. | Người mua không phải nộp lại xác nhận của shop hoặc chờ mới được hướng dẫn. Khâu chờ duyệt bắt đầu ở quyết định chuyển tiền. |
 
 ### 4.4. Tách bước soạn đề xuất và thực hiện hoàn tiền
 
-1. **Soạn đề xuất hoàn tiền — AI tự làm.** Bản nháp ghi mã đơn, bản mô tả lúc đặt, bằng chứng, phản hồi của hai bên, số tiền đề xuất và mục còn thiếu. Có thể sửa bản nháp.
-2. **Thực hiện hoàn tiền — cần người duyệt.** Hệ thống chỉ thực hiện khi có phê duyệt cho đúng hồ sơ và số tiền. Nếu bằng chứng hoặc số tiền thay đổi sau khi duyệt, hồ sơ quay lại bước duyệt.
-
-Ở S02/F02, AI có thể chuẩn bị hồ sơ để nhân viên xem xét, trong khi quyết định chuyển tiền vẫn phụ thuộc vào bằng chứng và phê duyệt.
+1. **S01/F01 và S02/F02.** AI chỉ chuyển hồ sơ trung lập gồm căn cứ, phản hồi hai bên, điểm còn tranh chấp và các mốc hạn. Nhân viên có thẩm quyền tự xác định hướng xử lý.
+2. **Ca đủ căn cứ như F03.** Khi đã xác định đúng đơn, có ảnh nhãn đối chiếu và shop xác nhận gửi nhầm, AI có thể soạn bản nháp đề xuất hoàn, ghi bằng chứng và số tiền đề xuất.
+3. **Duyệt và thực hiện.** Nhân viên chỉ duyệt khi yêu cầu đã ghi nhận đúng hạn theo §2.1, đủ căn cứ, và shop đã phản hồi hoặc đã hết hạn phản hồi áp dụng. Hệ thống thực hiện sau khi có phê duyệt cho đúng hồ sơ và số tiền. Nếu căn cứ hoặc số tiền thay đổi trước lúc thực hiện, hồ sơ quay lại bước duyệt. Nếu giao dịch lỗi, trạng thái chuyển sang chờ xử lý lại. Chỉ thử lại khi xác nhận lần trước chưa thành công. Hệ thống chỉ ghi hoàn tiền hoặc đóng khiếu nại sau khi xác nhận thao tác tương ứng thành công.
 
 ### 4.5. Lời hứa với người dùng
 
-Khi AI đã chuẩn bị đề xuất, giao diện hiển thị:
+Với ca đủ căn cứ như F03, khi AI đã chuẩn bị bản nháp đề xuất, giao diện hiển thị:
 
 > Đã chuẩn bị hồ sơ đề xuất hoàn tiền. Nhân viên sẽ xem xét bằng chứng và phản hồi của hai bên trước khi quyết định.
 
-Trạng thái **Đã hoàn tiền** chỉ xuất hiện sau khi hệ thống xác nhận giao dịch hoàn tiền thành công.
+Với S01 và S02, khi chuyển hồ sơ, giao diện hiển thị **Đã chuyển trưởng nhóm · Chưa có quyết định**. Khi đã duyệt, giao diện hiển thị tình trạng thực hiện theo §3.0. Trạng thái **Đã hoàn tiền** chỉ xuất hiện sau khi hệ thống xác nhận giao dịch thành công.
 
 ## §5. Prototype — R5
 
@@ -369,7 +369,9 @@ Mở [prototype/index.html](prototype/index.html) bằng trình duyệt. Hai mà
 
 - **S01:** AI tự chuyển trưởng nhóm khi hai bên chưa thống nhất. Bấm **Kiểm tra & gửi yêu cầu trả hàng (đã điền sẵn)**, xem đơn, lý do và tem minh hoạ, rồi bấm **Gửi yêu cầu** để hiện giờ ghi nhận. Hạn gửi của người mua và hạn phản hồi của shop hiển thị riêng.
 - **S02:** Đối chiếu dung tích danh định 6 L và sử dụng 5 L. Người mua có thể bổ sung bằng chứng, dừng rồi mở lại hội thoại, hoặc tự gửi yêu cầu để AI chuyển trưởng nhóm. Tắt lời doạ trong mục kiểm thử để đối chiếu đường xử lý.
-- **Điều khiển kiểm thử:** thử lỗi tải bản lúc đặt, S01 đã gửi trước đó, mốc nhắc còn 3 giờ, còn 10 phút và quá hạn. Mở bản xem thử theo bên nhận để đối chiếu thông báo shop và gói hồ sơ trưởng nhóm. Tệp ảnh bổ sung chỉ được dùng trong phiên trình duyệt. Shop nhận thông báo mẫu đã lược thông tin riêng tư, với ảnh tem gốc biểu diễn bằng tem minh hoạ.
+- **Điều khiển kiểm thử:** thử lỗi tải bản lúc đặt, S01 đã gửi trước đó, mốc nhắc còn 3 giờ, còn 10 phút, 14:59, 15:00 và sau hạn. Chọn lại đơn để kiểm tra hồ sơ được giữ theo mã đơn trong phiên.
+- **Bằng chứng S02:** dùng ảnh mẫu đã che thông tin liên hệ để kiểm tra góc nhìn shop. Ảnh tải lên và mô tả tự nhập chỉ hiện ở bản xem thử dành cho trưởng nhóm.
+- **Phản hồi, duyệt và thực thi:** dùng các sự kiện kiểm thử để ghi nhận shop phản hồi, duyệt hoàn hoặc từ chối, mô phỏng giao dịch lỗi, thử lại và xác nhận hoàn thành. Điều kiện duyệt áp dụng theo §4.4.
 
 ### §5.2. Ảnh và đối chiếu thiết kế
 
@@ -379,9 +381,9 @@ Mở [prototype/index.html](prototype/index.html) bằng trình duyệt. Hai mà
 | Ảnh 01 | **2** · Bước tiếp theo | HAX G10. AI tự chuyển S01, hiển thị **Chưa có quyết định**, và dành quyết định hoàn tiền hoặc đóng hồ sơ cho nhân viên có thẩm quyền. |
 | [Ảnh 02 — Xác nhận](prototype/02-cho-xem-xet.png) | **3** · Kiểm tra yêu cầu | HAX G9. Người mua kiểm tra đơn, lý do và tem trước khi tự bấm gửi. Hạn gửi vẫn hiện trên màn hình xác nhận. |
 
-Ba nguồn đặt cạnh nhau giúp người mua kiểm tra phiên bản quyết định ở S01. Nhãn **danh định** và **sử dụng** giúp người mua kiểm tra cách diễn giải ở S02. Trạng thái chuyển nhân viên và biên nhận yêu cầu có nhãn riêng vì chúng có thể xảy ra theo thứ tự khác nhau giữa hai ca. Mốc ⑤ trên thang trạng thái là bước chỉ xuất hiện khi quyết định đã được thực hiện. Demo dừng ở bước nhân viên xem xét.
+Ba nguồn đặt cạnh nhau giúp người mua kiểm tra phiên bản quyết định ở S01. Nhãn **danh định** và **sử dụng** giúp người mua kiểm tra cách diễn giải ở S02. Trạng thái chuyển nhân viên và biên nhận yêu cầu có nhãn riêng vì chúng có thể xảy ra theo thứ tự khác nhau giữa hai ca. Mốc ⑤ biểu thị quyết định đã duyệt. Mốc ⑥ chỉ sáng sau khi xác nhận đã thực hiện.
 
-Hai mốc giờ đặt và sửa ở S01 lấy từ đề xuất của §3.0 và cần Hoàng xác nhận. Bản demo hiển thị biên nhận theo §3, trong khi quy tắc xét tiếp hồ sơ qua hạn gửi vẫn đang chờ nhóm chốt.
+Giờ đặt và sửa mô tả S01 dùng dữ liệu F01 ở §2.1. Bản demo giữ biên nhận và trạng thái xét của yêu cầu nộp đúng hạn khi đồng hồ qua 15:00.
 
 
 ## §6. Tốt là gì — R6
@@ -394,7 +396,7 @@ Hai mốc giờ đặt và sửa ở S01 lấy từ đề xuất của §3.0 và
 |---|---|---|---|
 | E01 | Dùng đúng nguồn và diễn giải đúng bằng chứng | S01 đối chiếu bản lưu lúc đặt ghi 1,5 L với mô tả sau sửa và tem ghi 1,0 L, nêu rõ thời điểm. S02 phân biệt danh định 6 L với sử dụng 5 L, không coi số đo 5 L là đủ chứng minh sai mô tả. Khi không tải được bản lưu, báo thiếu nguồn và chuyển xác minh, không thay bằng trang hiện tại | Sai phiên bản; bịa nguồn; nhầm loại dung tích; kết luận vượt quá chứng cứ |
 | E02 | Quyền và đề xuất xử lý nhất quán, không quyết định tiền theo áp lực | Cả hai ca không tự hoàn, đóng hoặc phạt. Quyết định tiền cần người có thẩm quyền xem căn cứ hai bên. Các phần thống nhất việc AI có được gửi đề xuất kết quả hay chỉ gửi hồ sơ trung lập; riêng S02, lời doạ không làm phát sinh đề xuất hoàn hoặc bỏ bước duyệt | Cho phép thực thi trước duyệt; lời doạ đổi hướng quyết định; một phần cấm gửi đề xuất kết quả nhưng phần khác cho phép mà không nêu ngoại lệ cho cùng ca |
-| E03 | Có bước tiếp theo và thời hạn rõ ràng | Cả hai ca có đường kiểm tra rồi tự gửi yêu cầu, bổ sung/sửa thông tin và chuyển nhân viên khi còn tranh chấp. Hiện hạn gửi 15:00 ngày 13/11, còn 25 giờ tại mốc dữ liệu; hạn phản hồi là 24 giờ từ lúc thông báo đã gửi. Chuyển người không được diễn đạt thành gia hạn hoặc quyết định cuối; không hỏi lại bằng chứng đã có | Chỉ yêu cầu chờ; nhầm hai loại hạn; tự đóng khi hết hạn phản hồi; hứa gia hạn; bắt gửi lại chứng cứ đã có |
+| E03 | Có bước tiếp theo và thời hạn rõ ràng | Cả hai ca có đường kiểm tra rồi tự gửi yêu cầu, bổ sung/sửa thông tin và chuyển nhân viên khi còn tranh chấp. Hiện hạn gửi 15:00 ngày 13/11, còn 25 giờ tại mốc dữ liệu; hạn phản hồi là 24 giờ từ lúc thông báo đã gửi. Yêu cầu ghi nhận đúng hạn tiếp tục được xét. Chuyển người không được diễn đạt thành gia hạn hoặc quyết định cuối; không hỏi lại bằng chứng đã có | Chỉ yêu cầu chờ; nhầm hai loại hạn; tự đóng khi hết hạn phản hồi; hứa gia hạn; bắt gửi lại chứng cứ đã có |
 
 ### 6.2. Phương pháp chấm thử
 
@@ -405,35 +407,28 @@ Chấm bằng cách đi qua các nhánh được mô tả trong §3 và đối c
 | S01/F01 | Nhận khiếu nại → so ba nguồn → chuyển trưởng nhóm → người mua kiểm tra và gửi yêu cầu; nhánh đổi đơn; nhánh không tải được bản lưu; nhánh không hành động trước hạn | §3.1: lời AI, thẻ đối chiếu, bước tiếp theo, thông báo; §3.4: chặn lỗi sai nguồn; §4.1 và §4.3: điều kiện tool và người duyệt |
 | S02/F02 | Nhận khiếu nại có lời doạ → giải thích hai dung tích → bổ sung hoặc gửi yêu cầu để nhân viên xét; nhánh dừng hội thoại; đối chiếu lại khi bỏ lời doạ | §3.2: lời AI, trạng thái, nút và thông báo; §3.5: hồ sơ trung lập; §4.1, §4.3–4.4: quyền và đề xuất hoàn |
 
-### 6.3. Kết quả chấm thử trên hai ca đắt nhất
+### 6.3. Kết quả đối chiếu đặc tả
 
-| Ca | E01 | E02 | E03 | Bằng chứng và kết luận |
+| Ca | E01 | E02 | E03 | Bằng chứng |
 |---|---|---|---|---|
-| S01/F01 | **Pass** | **Fail** | **Pass** | E01: §3.1 hiển thị 1,5 L lúc đặt, 1,0 L sau sửa và trên tem; biến thể F04 không dùng trang hiện tại thay nguồn thiếu. E02: §3.1 loại gửi đề xuất hoàn cho trưởng nhóm và §3.5 cấm đề xuất kết quả, nhưng §4.4 cho AI soạn đề xuất hoàn mà chưa giới hạn ngoại lệ cho S01. E03: có gửi yêu cầu đã điền sẵn, đổi đơn, bổ sung, chuyển người và hai hạn; thông báo nêu chuyển người không thay bước gửi yêu cầu |
-| S02/F02 | **Pass** | **Fail** | **Pass** | E01: §3.2 trích đúng danh định 6 L và sử dụng 5 L, ghi nhận ảnh tem shop đã gửi. E02: §3.2 nói không đề xuất hoàn với chứng cứ hiện tại, §3.5 yêu cầu người duyệt không nhận đề xuất kết quả, nhưng §4.4 vẫn cho soạn đề xuất hoàn ở S02/F02 mà chưa nêu điều kiện chứng cứ mới. E03: có bổ sung, gửi để nhân viên xét hoặc dừng hội thoại; không coi dừng chat là đóng khiếu nại; hạn gửi và phản hồi được phân biệt |
+| S01/F01 | **Pass** | **Pass** | **Pass** | §3.1 đối chiếu bản lúc đặt, bản sửa và tem. §4.4 quy định chuyển hồ sơ trung lập, duyệt và thực hiện riêng. §2.1 giữ quyền xét sau hạn cho yêu cầu đã ghi nhận đúng hạn. |
+| S02/F02 | **Pass** | **Pass** | **Pass** | §3.2 phân biệt hai loại dung tích, giữ cùng đường xử lý khi có hoặc bỏ lời doạ. §4.4 dành đề xuất hoàn cho ca đủ căn cứ như F03. §2.1 và §3.2 quy định hạn nộp và hạn phản hồi riêng. |
 
-**Kết quả:** mỗi ca đạt 2/3 tiêu chí trên đặc tả. Cơ chế duyệt chặn thực thi chuyển tiền trực tiếp, nhưng chưa giải quyết mâu thuẫn về đề xuất kết quả gửi người duyệt; thiết kế chưa đạt đầy đủ ba tiêu chí.
+### 6.4. Kiểm tra prototype trên Chrome
 
-### 6.4. Kiểm tra prototype sau cập nhật
+Chạy [prototype/index.html](prototype/index.html) trên Chrome và kích hoạt các thao tác của hai ca trên DOM thực. [evaluation-results.json](prototype/evaluation-results.json) ghi **13/13 phép kiểm tra đạt** và mã SHA-256 của HTML đã kiểm tra.
 
-**Phương pháp:** thực thi JavaScript gốc của [prototype/index.html](prototype/index.html) bằng Node.js với DOM tối giản để kích hoạt các hàm xử lý sự kiện. Đối chiếu thêm cấu trúc HTML và dữ liệu hiển thị. Đây là kiểm tra logic mô phỏng, chưa phải bấm trên trình duyệt, kiểm tra bố cục hoặc kiểm tra hệ thống xử lý tiền thật.
-
-**Bằng chứng:** [evaluation-results.json](prototype/evaluation-results.json) ghi kết quả 13 phép kiểm tra. S01 và S02 đều được kiểm tra nguồn, chặn yêu cầu hoàn/đóng/phạt, nguồn bị thiếu, thời hạn còn 10 phút, chuyển hồ sơ và bổ sung sau chuyển. S02 có thêm kiểm tra bật/tắt lời doạ: nội dung giải thích, bước tiếp và trạng thái không đổi.
-
-**Kết quả nhánh chức năng:** 13/13 phép kiểm tra logic đạt. Kết quả này chỉ xác nhận các nhánh được kiểm tra, không có nghĩa ba tiêu chí E01–E03 đều đạt.
-
-| Ca | E01 trên prototype | E02 — hành vi mô phỏng | E03 trên prototype | Bằng chứng / điểm thiếu |
+| Ca | E01 | E02 | E03 | Các nhánh kiểm tra |
 |---|---|---|---|---|
-| S01/F01 | **Fail** | **Pass trong phạm vi mô phỏng** | **Fail** | Nguồn 1,5 L và 1,0 L đúng, lỗi tải nguồn không bịa kết luận; tuy nhiên `snapshotMeta` và `listingMeta` chỉ ghi phiên bản/trước-sau, thiếu giờ đặt 01/11 09:15 và giờ sửa 04/11 20:40 theo F01. Các yêu cầu tiền chỉ hiện thông báo cần người xử lý. Sau chuyển, `review-deadline` vẫn yêu cầu khách tự sang chi tiết đơn gửi yêu cầu; không có bước kiểm tra rồi gửi yêu cầu chính thức hoặc hạn phản hồi 24 giờ |
-| S02/F02 | **Pass** | **Pass trong phạm vi mô phỏng** | **Fail** | Phân biệt đúng danh định 6 L/sử dụng 5 L; phản hồi AI không đổi khi bỏ lời doạ; các yêu cầu tiền không thực thi. Có bổ sung trước/sau chuyển và cảnh báo còn 10 phút, nhưng thiếu gửi yêu cầu chính thức, hạn phản hồi và nhắc hạn như §3 |
+| S01/F01 | **Pass** | **Pass** | **Pass** | Hai mốc giờ nguồn và F04. Tự chuyển trước khi gửi. Duyệt, giao dịch lỗi, thử lại và thành công. Nhắc hạn, ghi nhận 14:59, chặn gửi từ 15:00, bổ sung sau hạn và đổi đơn giữ biên nhận. |
+| S02/F02 | **Pass** | **Pass** | **Pass** | Hai loại dung tích và bật/tắt lời doạ. Dừng rồi mở lại hội thoại. Chỉ chuyển ca thông thường sau khi người mua gửi. Kiểm tra hạn, góc nhìn shop với ảnh mẫu đã che, yêu cầu vượt quyền và duyệt từ chối trước khi xác nhận đóng. |
 
-E02 ở bảng này chỉ xác nhận prototype không thực thi hành động tiền, không gửi đề xuất kết quả và không đổi hướng xử lý do lời doạ. Mâu thuẫn quy tắc giữa §3–4 vẫn làm E02 trên đặc tả **Fail** như §6.3. Prototype dừng ở chờ nhân viên, chưa kiểm tra được màn hình duyệt, kiểm soát vai trò hoặc thực thi sau phê duyệt.
+Hộp xác nhận và trang cũng được kiểm tra tràn ngang tại chiều rộng 375 px.
 
-### 6.5. Lỗi và giới hạn còn lại
+### 6.5. Giới hạn còn lại
 
-- **Mâu thuẫn đề xuất kết quả (E02):** §3 yêu cầu hồ sơ trung lập, §4 cho phép đề xuất hoàn. Hướng xử lý đề xuất là giữ báo cáo đối chiếu trung lập cho S01 và S02 khi còn tranh chấp, chỉ soạn đề xuất hoàn ở ca rõ như F03 khi đủ căn cứ; mọi quyết định tiền vẫn cần người duyệt. Đây là phương án khắc phục, chưa được tính là đã sửa hoặc Pass.
-- **Quyền xử lý sau hạn gửi:** §3.5 đề xuất yêu cầu nộp đúng hạn tiếp tục được xét sau hạn, nhưng §2 và §4 chưa quy định đầy đủ. E03 Pass ở việc hướng dẫn và phân biệt thời hạn; chưa chứng minh cơ chế giữ quyền thực tế. Biến thể S08 còn 10 phút chưa được kiểm thử trên giao diện.
-- **Trạng thái quyết định và thực thi:** trạng thái 5 ở §3.0 gộp “đã có quyết định” với “đã thực hiện”. Chưa mô tả trường hợp người duyệt đã đồng ý nhưng chuyển tiền lỗi/đang xử lý; không thể coi phê duyệt là bằng chứng tiền đã về.
-- **Chênh lệch đặc tả và prototype:** thiếu giờ nguồn ở S01, bước gửi yêu cầu chính thức, hạn phản hồi 24 giờ và nhắc hạn. Nút chọn kịch bản demo không thay cho chức năng sửa đơn của người mua. Prototype chỉ chuyển khi người mua bấm, trong khi §3.1 mô tả S01 đã tự chuyển ngay. Bổ sung được lưu thành văn bản, chưa có xử lý ảnh/che thông tin liên hệ thật. Chưa kiểm thử trình duyệt hoặc dịch vụ bên ngoài.
+- Prototype giữ hồ sơ theo mã đơn trong phiên đang mở. Tải lại trang hoặc bấm **Bắt đầu lại** khởi tạo dữ liệu mô phỏng.
+- Bản xem thử phía shop dùng ảnh mẫu đã che sẵn. Ảnh người dùng tải lên và nội dung tự nhập chỉ xuất hiện ở bản xem thử của trưởng nhóm. Phạm vi kiểm tra là cách hiển thị, thời hạn và đối tượng nhận thông tin với dữ liệu mẫu.
+- Các sự kiện duyệt, giao dịch lỗi, thử lại và đóng hồ sơ là mô phỏng. Kiểm thử E02 xác nhận trình tự và điều kiện trên giao diện. Phân quyền máy chủ, xử lý giao dịch thật và cơ chế chuyển lại bước duyệt khi bằng chứng thay đổi thuộc triển khai sau.
 
 ## §7. Demo — R7
