@@ -307,7 +307,7 @@ Trạng thái: ① Chưa đủ căn cứ · CHƯA có quyết định
 | §4 | S01 giả định `chuyen_truong_nhom` là **tự làm**, vì đảo lại được và chờ duyệt thì tốn hạn của người mua. `soan_hoan_tien` và `tu_choi_khieu_nai` **không có trong khung chat**. `yeu_cau_bang_chung` **không xin lại** bằng chứng đã có (ảnh tem shop ở S02). `phat_shop` không xuất hiện ở cả hai ca. Người duyệt **không nhận đề xuất kết quả** từ AI. |
 | §4 (đề xuất luật, chưa có trong chính sách dựng) | “Yêu cầu được ghi nhận trước hạn gửi thì được xét tới khi có quyết định, kể cả khi bổ sung hay phản hồi diễn ra sau hạn gửi.” Đây không phải gia hạn, mà là giữ quyền cho yêu cầu đã nộp. Khi §4 chưa chốt luật này, AI chỉ nói “đã ghi nhận lúc …”. |
 | §5 | Prototype cần có: thẻ đối chiếu ba nguồn (S01), thẻ trích hai loại dung tích (S02), thang trạng thái ①–⑤, hai đồng hồ hạn riêng, nút **Không phải đơn này**, nút gửi yêu cầu đã điền sẵn, và **không có** nút hoàn, đóng hay phạt. Ba ô ở 3.3 là ba số để đánh trên ảnh. |
-| §6 | E01: thẻ đối chiếu (S01) và thẻ trích dung tích (S02). E02: không có nút tiền trong chat, kèm luật câu chữ ở 3.0. E03: hai đồng hồ hạn, nút gửi điền sẵn, nhắc khi còn 3 giờ. Giờ đặt và giờ sửa của F01 là đề xuất ở 3.0, cần xác nhận khi chấm. |
+| §6 | E01: thẻ đối chiếu (S01) và thẻ trích dung tích (S02). E02: không có nút tiền trong chat, kèm luật câu chữ ở 3.0. E03: hai đồng hồ hạn, nút gửi điền sẵn, nhắc khi còn 3 giờ. Thời điểm đặt hàng và sửa mô tả của F01 dùng thống nhất theo dữ liệu giả lập ở §2.1 và §3.0. |
 
 
 ## §4. Mức tự chủ — R4
@@ -388,7 +388,7 @@ Lời thoại AI là bản tạm cho §3. Nút chuyển hồ sơ, trạng thái 
 
 ### 6.1. Ba tiêu chí Pass/Fail
 
-Đối tượng đánh giá là thiết kế trong §2–4. Mỗi tiêu chí chỉ Pass khi đủ các điều kiện; thiếu điều kiện hoặc có quy tắc mâu thuẫn thì Fail. Kiểm thử thao tác trên prototype được ghi riêng, không suy ra từ kết quả đọc đặc tả.
+Đánh giá gồm hai phần: tính nhất quán của đặc tả §2–4 và hành vi mô phỏng trong prototype. Mỗi tiêu chí chỉ Pass khi đủ các điều kiện; thiếu điều kiện hoặc có quy tắc mâu thuẫn thì Fail. Kết quả của một nhánh chức năng không thay thế kết quả của toàn bộ tiêu chí.
 
 | ID | Tiêu chí | Điều kiện Pass | Điều kiện Fail |
 |---|---|---|---|
@@ -398,7 +398,7 @@ Lời thoại AI là bản tạm cho §3. Nút chuyển hồ sơ, trạng thái 
 
 ### 6.2. Phương pháp chấm thử
 
-Chấm bằng cách đi qua các nhánh được mô tả trong §3 và đối chiếu điều kiện thực hiện tool ở §4, với dữ liệu §2.1. Đây là đánh giá thiết kế trên đặc tả, chưa phải kiểm thử prototype hay lời gọi AI thực tế.
+Chấm bằng cách đi qua các nhánh được mô tả trong §3 và đối chiếu điều kiện thực hiện tool ở §4, với dữ liệu §2.1. Kết quả đọc đặc tả ở §6.3 được tách riêng với kiểm tra mã mô phỏng ở §6.4. Không có lời gọi AI thực tế.
 
 | Ca | Nhánh đã đối chiếu trên đặc tả | Căn cứ |
 |---|---|---|
@@ -414,11 +414,26 @@ Chấm bằng cách đi qua các nhánh được mô tả trong §3 và đối c
 
 **Kết quả:** mỗi ca đạt 2/3 tiêu chí trên đặc tả. Cơ chế duyệt chặn thực thi chuyển tiền trực tiếp, nhưng chưa giải quyết mâu thuẫn về đề xuất kết quả gửi người duyệt; thiết kế chưa đạt đầy đủ ba tiêu chí.
 
-### 6.4. Lỗi và giới hạn còn lại
+### 6.4. Kiểm tra prototype sau cập nhật
+
+**Phương pháp:** thực thi JavaScript gốc của [prototype/index.html](prototype/index.html) bằng Node.js với DOM tối giản để kích hoạt các hàm xử lý sự kiện. Đối chiếu thêm cấu trúc HTML và dữ liệu hiển thị. Đây là kiểm tra logic mô phỏng, chưa phải bấm trên trình duyệt, kiểm tra bố cục hoặc kiểm tra hệ thống xử lý tiền thật.
+
+**Bằng chứng:** [evaluation-results.json](prototype/evaluation-results.json) ghi kết quả 13 phép kiểm tra. S01 và S02 đều được kiểm tra nguồn, chặn yêu cầu hoàn/đóng/phạt, nguồn bị thiếu, thời hạn còn 10 phút, chuyển hồ sơ và bổ sung sau chuyển. S02 có thêm kiểm tra bật/tắt lời doạ: nội dung giải thích, bước tiếp và trạng thái không đổi.
+
+**Kết quả nhánh chức năng:** 13/13 phép kiểm tra logic đạt. Kết quả này chỉ xác nhận các nhánh được kiểm tra, không có nghĩa ba tiêu chí E01–E03 đều đạt.
+
+| Ca | E01 trên prototype | E02 — hành vi mô phỏng | E03 trên prototype | Bằng chứng / điểm thiếu |
+|---|---|---|---|---|
+| S01/F01 | **Fail** | **Pass trong phạm vi mô phỏng** | **Fail** | Nguồn 1,5 L và 1,0 L đúng, lỗi tải nguồn không bịa kết luận; tuy nhiên `snapshotMeta` và `listingMeta` chỉ ghi phiên bản/trước-sau, thiếu giờ đặt 01/11 09:15 và giờ sửa 04/11 20:40 theo F01. Các yêu cầu tiền chỉ hiện thông báo cần người xử lý. Sau chuyển, `review-deadline` vẫn yêu cầu khách tự sang chi tiết đơn gửi yêu cầu; không có bước kiểm tra rồi gửi yêu cầu chính thức hoặc hạn phản hồi 24 giờ |
+| S02/F02 | **Pass** | **Pass trong phạm vi mô phỏng** | **Fail** | Phân biệt đúng danh định 6 L/sử dụng 5 L; phản hồi AI không đổi khi bỏ lời doạ; các yêu cầu tiền không thực thi. Có bổ sung trước/sau chuyển và cảnh báo còn 10 phút, nhưng thiếu gửi yêu cầu chính thức, hạn phản hồi và nhắc hạn như §3 |
+
+E02 ở bảng này chỉ xác nhận prototype không thực thi hành động tiền, không gửi đề xuất kết quả và không đổi hướng xử lý do lời doạ. Mâu thuẫn quy tắc giữa §3–4 vẫn làm E02 trên đặc tả **Fail** như §6.3. Prototype dừng ở chờ nhân viên, chưa kiểm tra được màn hình duyệt, kiểm soát vai trò hoặc thực thi sau phê duyệt.
+
+### 6.5. Lỗi và giới hạn còn lại
 
 - **Mâu thuẫn đề xuất kết quả (E02):** §3 yêu cầu hồ sơ trung lập, §4 cho phép đề xuất hoàn. Hướng xử lý đề xuất là giữ báo cáo đối chiếu trung lập cho S01 và S02 khi còn tranh chấp, chỉ soạn đề xuất hoàn ở ca rõ như F03 khi đủ căn cứ; mọi quyết định tiền vẫn cần người duyệt. Đây là phương án khắc phục, chưa được tính là đã sửa hoặc Pass.
 - **Quyền xử lý sau hạn gửi:** §3.5 đề xuất yêu cầu nộp đúng hạn tiếp tục được xét sau hạn, nhưng §2 và §4 chưa quy định đầy đủ. E03 Pass ở việc hướng dẫn và phân biệt thời hạn; chưa chứng minh cơ chế giữ quyền thực tế. Biến thể S08 còn 10 phút chưa được kiểm thử trên giao diện.
 - **Trạng thái quyết định và thực thi:** trạng thái 5 ở §3.0 gộp “đã có quyết định” với “đã thực hiện”. Chưa mô tả trường hợp người duyệt đã đồng ý nhưng chuyển tiền lỗi/đang xử lý; không thể coi phê duyệt là bằng chứng tiền đã về.
-- **Kiểm chứng prototype:** §5 chưa có nội dung và thư mục bài chưa có prototype; chưa xác nhận nút bấm, bước duyệt, thông báo, nhắc hạn hoặc cơ chế chặn tool hoạt động thực tế. Kết quả trên chỉ áp dụng cho đặc tả.
+- **Chênh lệch đặc tả và prototype:** thiếu giờ nguồn ở S01, bước gửi yêu cầu chính thức, hạn phản hồi 24 giờ và nhắc hạn. Nút chọn kịch bản demo không thay cho chức năng sửa đơn của người mua. Prototype chỉ chuyển khi người mua bấm, trong khi §3.1 mô tả S01 đã tự chuyển ngay. Bổ sung được lưu thành văn bản, chưa có xử lý ảnh/che thông tin liên hệ thật. Chưa kiểm thử trình duyệt hoặc dịch vụ bên ngoài.
 
 ## §7. Demo — R7
