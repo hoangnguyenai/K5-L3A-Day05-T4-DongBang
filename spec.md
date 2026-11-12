@@ -6,7 +6,7 @@
 | Họ và tên | Mã học viên / MSSV | Việc phụ trách |
 |---|---|---|
 | Nguyễn Lâm Hoàng | 2A202603448 | §1: lát cắt và phạm vi; §2: dữ liệu giả, kịch bản rủi ro và lựa chọn hai ca đắt nhất; §6: tiêu chí và phương pháp đánh giá Pass/Fail |
-| Lê Hoàng Quân | Chưa cung cấp | §4: mức tự chủ của từng tool và thử trên ba kịch bản |
+| Lê Hoàng Quân | 2A202603369 | §4: mức tự chủ của từng tool và thử trên ba kịch bản |
 
 ## §1. Lát cắt & phạm vi — R1
 
