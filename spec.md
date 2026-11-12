@@ -7,6 +7,7 @@
 |---|---|---|
 | Nguyễn Lâm Hoàng | 2A202603448 | §1: lát cắt và phạm vi; §2: dữ liệu giả, kịch bản rủi ro và lựa chọn hai ca đắt nhất; §6: tiêu chí và phương pháp đánh giá Pass/Fail |
 | Lê Hoàng Quân | 2A202603369 | §4: mức tự chủ của từng tool và thử trên ba kịch bản |
+| Kiều Đình Văn | 2A202603376 | §3: khi AI sai — thiết kế lời đáp, giao diện, bước xử lý và thông báo cho hai kịch bản đắt nhất; phân loại lỗi và áp dụng nguyên tắc HAX/PAIR |
 
 ## §1. Lát cắt & phạm vi — R1
 
